@@ -10,6 +10,23 @@
             <p style="font-size: 70%;color: red;">Required</p>
           </b-col>
         </b-row>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <b-button
+            variant="outline-danger"
+            class="actionButton"
+            v-b-toggle:formCollapse
+            @click="reset()"
+            ><i class="far fa-times-circle mr-1"></i>Cancel</b-button
+          >
+          <b-button
+            variant="outline-success"
+            type="submit"
+            class="actionButton"
+            v-b-toggle:formCollapse
+            ><i class="far fa-check-circle mr-1"></i
+            >{{ txtBtnFormulario }}</b-button
+          >
+        </div>
       </b-form>
     </b-collapse>
   </div>

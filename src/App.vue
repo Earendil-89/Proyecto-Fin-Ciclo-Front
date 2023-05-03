@@ -19,9 +19,6 @@
         <router-view :key="$route.fullPath"></router-view>
       </b-card>
     </div>
-    <div v-if="!currentUser">
-      <router-view v-if="!currentUser" :key="$route.fullPath"></router-view>
-    </div>
   </div>
 </template>
 
