@@ -32,7 +32,7 @@ export default {
           header: 'Main menu',
           hiddenOnCollapse: false
         },
-        { href: '/prueba', title: 'Prueba', icon: 'fa  fa-code-branch' }
+        { href: '/usuario', title: 'Usuario', icon: 'fa  fa-code-branch' }
       ]
     };
   },

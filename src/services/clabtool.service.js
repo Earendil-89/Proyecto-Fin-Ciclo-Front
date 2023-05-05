@@ -1,11 +1,11 @@
 import axios from 'axios';
 require('dotenv').config();
 
-class PruebaService {
+class ClabtoolService {
 
   getData(type) {
     return axios
-      .get(process.env.VUE_APP_PRUEBA_SERVICE +'/api/prueba/' + type, {
+      .get("http://localhost:9099" +'/api/clabtool/' + type, {
       }).then(response => response.data)
     
   }
@@ -13,7 +13,7 @@ class PruebaService {
   saveData(type,formData) {
     return axios
       .post(
-        process.env.VUE_APP_PRUEBA_SERVICE +'/api/prueba/'+ type,
+        process.env.VUE_APP_CLABTOOL_SERVICE +'/api/clabtool/'+ type,
          formData,
         {}
       )
@@ -23,7 +23,7 @@ class PruebaService {
   updateData(type,formData) {
     return axios
       .put(
-        process.env.VUE_APP_PRUEBA_SERVICE +'/api/prueba/'+ type,
+        process.env.VUE_APP_CLABTOOL_SERVICE +'/api/clabtool/'+ type,
          formData,
         {}
       )
@@ -33,7 +33,7 @@ class PruebaService {
   deleteData(type,formData) {
     return axios
       .delete(
-        process.env.VUE_APP_PRUEBA_SERVICE +'/api/prueba/'+ type +'/'+formData,
+        process.env.VUE_APP_CLABTOOL_SERVICE +'/api/clabtool/'+ type +'/'+formData,
         {}
       )
       .then(response => response.data)
@@ -42,4 +42,4 @@ class PruebaService {
 
 }
 
-export default new PruebaService();
+export default new ClabtoolService();

@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import PruebaService from '../services/prueba.service';
+import ClabtoolService from '../services/clabtool.service';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
@@ -130,7 +130,7 @@ export default {
 
       switch (this.type) {
         default:
-          PruebaService.getData(this.type)
+          ClabtoolService.getData(this.type)
             .then(data => {
               this.items = data;
             })
@@ -144,7 +144,7 @@ export default {
 
       switch (this.type) {
         default:
-          PruebaService.saveData(this.type, data)
+          ClabtoolService.saveData(this.type, data)
             .then(data => {
               this.showMessage(data.message);
               this.getData();
@@ -159,7 +159,7 @@ export default {
 
       switch (this.type) {
         default:
-          PruebaService.updateData(this.type, data)
+          ClabtoolService.updateData(this.type, data)
             .then(data => {
               this.showMessage(data.message);
               this.getData();
@@ -186,7 +186,7 @@ export default {
           if (this.deleteConfirm == true) {
             switch (this.type) {
               default:
-                PruebaService.deleteData(this.type, data.id)
+                ClabtoolService.deleteData(this.type, data.id)
                   .then(data => {
                     this.showMessage(data.message);
                     this.getData();
@@ -219,7 +219,7 @@ export default {
     });
   },
   components: {
-    "prueba-dynamic": () => import("./PruebaComponent.vue"),
+    "usuario-dynamic": () => import("./UsuarioComponent.vue"),
     VueJsonPretty
 }
 };

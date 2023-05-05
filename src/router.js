@@ -14,12 +14,12 @@ export const router = new Router({
       component: () => import('./views/Home.vue')
     },
     {
-      path: '/prueba',
+      path: '/usuario',
       component: () => import('./components/Crud.vue'),
-      props: { current: 'prueba-dynamic' , 
-        mainTableFields: Vue.prototype.$constants().pruebaTableFields,
-        type: 'prueba'
+      props: { current: 'usuario-dynamic' , 
+        mainTableFields: Vue.prototype.$constants().usuarioTableFields,
+        type: 'usuario'
       }
-    }
+    },
   ]
 });
