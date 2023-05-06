@@ -36,8 +36,7 @@
   </div>
 </template>
   
-  <script>
-  
+<script>
   export default {
     name: 'Frase',
     data() {

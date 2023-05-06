@@ -233,6 +233,8 @@ export default {
       filterSearch: '',
       childFilterSearch: '',
       items: [],
+      childItems: [],
+      editingParent: [],
       deleteConfirm: '',
       options: ['list', 'of', 'options'],
       value:'',
@@ -309,11 +311,15 @@ export default {
           }
         });
     },
+    saveChildData(data) {
+      this.items
+    },
     showMessage(message) {
       this.$parent.showMsgBoxConfirm(message, 'success', 'Success', 'sm');
     },
     editComponent(item) {
       this.$refs.component.loadItem(item);
+      
     },
     catchError(error) {
       this.$parent.catchError(error);

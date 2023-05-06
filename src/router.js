@@ -28,6 +28,17 @@ export const router = new Router({
       mainTableFields: Vue.prototype.$constants().fraseTableFields,
       type: 'frase'
       }
+    },
+    {
+      path: '/armario',
+      component: () => import('./components/CrudNested.vue'),
+      props: { parent: "armario-dynamic",
+        children: "estante-dynamic",
+        mainTableFields: Vue.prototype.$constants().armarioTableFields,
+        childTableFields: Vue.prototype.$constants().estanteTableFields,
+        type: 'armario',
+        childType: 'estante'
+      }
     }
   ]
 });
