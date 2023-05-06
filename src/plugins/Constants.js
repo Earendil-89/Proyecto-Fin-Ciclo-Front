@@ -12,6 +12,16 @@ export default {
           { key: 'codigo', label: 'Codigo', sortable: true },
           { key: 'descripcion', label: 'Descripcion'},
           { key: 'action', label : '', thStyle: { width: '120px'} }
+        ],
+        armarioTableFields:[
+          { key: 'nombre', label: 'Nombre', sortable: true },
+          { key: 'descripcion', label: 'Descripcion', sortable: true },
+          { key: 'action', label: '', thStyle: { width: '180px'} }
+        ],
+        estanteTableFields:[
+          { key: 'nombre', label: 'Nombre', sortable: true },
+          { key: 'descripcion', label: 'Descripcion', sortable: true },
+          { key: 'childAction', label: '', thStyle: { width: '120px'} }          
         ]
       };
     };
