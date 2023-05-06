@@ -33,7 +33,8 @@ export default {
           hiddenOnCollapse: false
         },
         { href: '/usuario', title: 'Usuario', icon: 'fa  fa-code-branch' },
-        { href: '/frase', title: 'Frase', icon: 'fa  fa-code-branch' }
+        { href: '/frase', title: 'Frase', icon: 'fa  fa-code-branch' },
+        { href: '/armario', title: 'Almacenamiento', icon: 'fa fa-code-branch' }
       ]
     };
   },
