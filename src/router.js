@@ -16,10 +16,18 @@ export const router = new Router({
     {
       path: '/usuario',
       component: () => import('./components/Crud.vue'),
-      props: { current: 'usuario-dynamic' , 
+      props: { current: 'usuario-dynamic', 
         mainTableFields: Vue.prototype.$constants().usuarioTableFields,
         type: 'usuario'
       }
     },
+    {
+      path: '/frase',
+      component: () => import('./components/Crud.vue'),
+      props: { current: "frase-dynamic",
+      mainTableFields: Vue.prototype.$constants().fraseTableFields,
+      type: 'frase'
+      }
+    }
   ]
 });

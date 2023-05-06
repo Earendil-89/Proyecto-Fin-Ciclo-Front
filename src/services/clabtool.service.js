@@ -1,11 +1,13 @@
 import axios from 'axios';
 require('dotenv').config();
 
+const SERVICE = 'http://localhost:9099';
+
 class ClabtoolService {
 
   getData(type) {
     return axios
-      .get("http://localhost:9099" +'/api/clabtool/' + type, {
+      .get(SERVICE +'/api/clabtool/' + type, {
       }).then(response => response.data)
     
   }
@@ -13,7 +15,7 @@ class ClabtoolService {
   saveData(type,formData) {
     return axios
       .post(
-        process.env.VUE_APP_CLABTOOL_SERVICE +'/api/clabtool/'+ type,
+        SERVICE +'/api/clabtool/'+ type,
          formData,
         {}
       )
@@ -23,7 +25,7 @@ class ClabtoolService {
   updateData(type,formData) {
     return axios
       .put(
-        process.env.VUE_APP_CLABTOOL_SERVICE +'/api/clabtool/'+ type,
+        SERVICE +'/api/clabtool/'+ type,
          formData,
         {}
       )
@@ -33,7 +35,7 @@ class ClabtoolService {
   deleteData(type,formData) {
     return axios
       .delete(
-        process.env.VUE_APP_CLABTOOL_SERVICE +'/api/clabtool/'+ type +'/'+formData,
+        SERVICE +'/api/clabtool/'+ type +'/'+formData,
         {}
       )
       .then(response => response.data)

@@ -3,7 +3,7 @@
     <div class="main">
       <sidebar-menu 
         :menu="sideBarMenu"
-        width="180px"
+        width="220px"
         :collapsed="sideBarCollapsed"
         @toggle-collapse="onToggleCollapse"
       >
@@ -13,7 +13,7 @@
         v-bind:style="[
           sideBarCollapsed == true
             ? 'margin: 10px 30px 30px 75px; padding: 0px 0px 0px 0px;'
-            : 'margin: 10px 30px 30px 205px;padding: 0px 0px 0px 0px;'
+            : 'margin: 10px 30px 30px 245px;padding: 0px 0px 0px 0px;'
         ]"
       >
         <router-view :key="$route.fullPath"></router-view>
@@ -29,10 +29,11 @@ export default {
     return {
       sideBarCollapsed: false,
       sideBarMenu: [ {
-          header: 'Main menu',
+          header: 'Menu principal',
           hiddenOnCollapse: false
         },
-        { href: '/usuario', title: 'Usuario', icon: 'fa  fa-code-branch' }
+        { href: '/usuario', title: 'Usuario', icon: 'fa  fa-code-branch' },
+        { href: '/frase', title: 'Frase', icon: 'fa  fa-code-branch' }
       ]
     };
   },

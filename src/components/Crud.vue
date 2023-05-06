@@ -220,6 +220,7 @@ export default {
   },
   components: {
     "usuario-dynamic": () => import("./UsuarioComponent.vue"),
+    "frase-dynamic": () => import("./FraseComponent.vue"),
     VueJsonPretty
 }
 };

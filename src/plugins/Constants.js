@@ -8,6 +8,11 @@ export default {
           { key: 'nif', label: 'DNI', sortable: true },
           { key: 'action', label: '', thStyle: { width: '120px'} }
         ],
+        fraseTableFields:[
+          { key: 'codigo', label: 'Codigo', sortable: true },
+          { key: 'descripcion', label: 'Descripcion'},
+          { key: 'action', label : '', thStyle: { width: '120px'} }
+        ]
       };
     };
   }
