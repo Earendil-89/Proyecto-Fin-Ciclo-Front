@@ -34,6 +34,10 @@ export default {
           { key: 'nombre', label: 'Nombre', sortable: true },
           { key: 'image', label: 'Imagen', thStyle: { width: '100px'} },
           { key: 'action', label: '', thStyle: { width: '120px'} }
+        ],
+        envaseTableFields:[
+          { key: 'codigo', label: 'Código' },
+          { key: ''}
         ]
       };
     };

@@ -8,7 +8,7 @@
           class="mt-1 actionButton"
           v-show="!formStateCollapse"
         >
-          <i class="fas fa-plus-circle"></i> New {{ type }}
+          <i class="fas fa-plus-circle"></i> {{ type == 'envaseProp' ? 'Datos de envase' : 'Crear ' + type }} 
         </b-button>
       </b-col>
       <b-col cols="10">
@@ -226,6 +226,8 @@ export default {
     "frase-dynamic": () => import("./FraseComponent.vue"),
     "etiqueta-dynamic": () => import("./EtiquetaComponent.vue"),
     "compuesto-dynamic": () => import("./CompuestoComponent.vue"),
+    "fecha-dynamic": () => import("./FechaComponent.vue"),
+    "envase-dynamic": () => import("./EnvasePropComponent.vue"),
     VueJsonPretty
 }
 };

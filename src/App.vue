@@ -39,7 +39,8 @@ export default {
         { href: '/frase', title: 'Frases seguridad', icon: 'fas fa-exclamation-triangle' },
         { href: '/armario', title: 'Almacenamiento', icon: 'fas fa-box' },
         { href: '/etiqueta', title: 'Etiquetado seguridad', icon: 'fas fa-exclamation-triangle'},
-        { href: '/compuesto', title: 'Compuestos químicos', icon :'fas fa-atom' }
+        { href: '/compuesto', title: 'Compuestos químicos', icon :'fas fa-atom' },
+        { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' }
       ]
     };
   },

@@ -55,6 +55,14 @@ export const router = new Router({
         mainTableFields: Vue.prototype.$constants().compuestoTableFields,
         type: 'compuesto'
       }
+    },
+    {
+      path: '/envaseProp',
+      component: () => import('./components/Crud.vue'),
+      props: { current: "envase-dynamic",
+        mainTableFields: Vue.prototype.$constants().envaseTableFields,
+        type: 'envaseProp'
+      }
     }
   ]
 });
