@@ -62,6 +62,9 @@
             <b-spinner class="align-middle"></b-spinner>
           </div>
         </template>
+        <template #cell(image)="row" align="center">
+          <img :src='row.item.imgUrl' height="64">
+        </template>
         <template #cell(action)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
           <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
             <b-button
@@ -172,10 +175,10 @@ export default {
     deleteData(data) {
       this.deleteConfirm = '';
       this.$bvModal
-        .msgBoxConfirm('Are you sure?', {
+        .msgBoxConfirm('¿Estás seguro?', {
           title: '',
           okVariant: 'danger',
-          okTitle: 'YES',
+          okTitle: 'SÍ',
           cancelTitle: 'NO',
           footerClass: 'p-2',
           hideHeaderClose: false,
@@ -221,6 +224,8 @@ export default {
   components: {
     "usuario-dynamic": () => import("./UsuarioComponent.vue"),
     "frase-dynamic": () => import("./FraseComponent.vue"),
+    "etiqueta-dynamic": () => import("./EtiquetaComponent.vue"),
+    "compuesto-dynamic": () => import("./CompuestoComponent.vue"),
     VueJsonPretty
 }
 };

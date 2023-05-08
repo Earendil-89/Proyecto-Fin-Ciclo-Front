@@ -25,8 +25,16 @@ export const router = new Router({
       path: '/frase',
       component: () => import('./components/Crud.vue'),
       props: { current: "frase-dynamic",
-      mainTableFields: Vue.prototype.$constants().fraseTableFields,
-      type: 'frase'
+        mainTableFields: Vue.prototype.$constants().fraseTableFields,
+        type: 'frase'
+      }
+    },
+    {
+      path: '/etiqueta',
+      component: () => import('./components/Crud.vue'),
+      props: { current: 'etiqueta-dynamic',
+        mainTableFields: Vue.prototype.$constants().etiquetaTableFields,
+        type: 'etiqueta'
       }
     },
     {
@@ -38,6 +46,14 @@ export const router = new Router({
         childTableFields: Vue.prototype.$constants().estanteTableFields,
         type: 'armario',
         childType: 'estante'
+      }
+    },
+    {
+      path: '/compuesto',
+      component: () => import('./components/Crud.vue'),
+      props: { current: "compuesto-dynamic",
+        mainTableFields: Vue.prototype.$constants().compuestoTableFields,
+        type: 'compuesto'
       }
     }
   ]

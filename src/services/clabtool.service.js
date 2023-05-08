@@ -39,31 +39,6 @@ class ClabtoolService {
       )
       .then(response => response.data)
   }
-
-  getChildData(type) {
-    return axios
-      .get(SERVICE +'/api/clabtool/' + type, {
-      }).then(response => response.data)
-  }
-
-  updateChildData(type,formData) {
-    return axios
-      .put(
-        SERVICE +'/api/clabtool/'+ type,
-         formData,
-        {}
-      )
-      .then(response => response.data)
-  }
-
-  deleteChildData(type,formData) {
-    return axios
-      .delete(
-        SERVICE +'/api/clabtool/'+ type +'/'+formData,
-        {}
-      )
-      .then(response => response.data)
-  }
 }
 
 export default new ClabtoolService();

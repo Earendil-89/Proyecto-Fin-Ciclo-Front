@@ -1,214 +1,231 @@
 <template>
   <div>
-    <b-row>
-      <b-col>
-        <!-- Top: New button, search, pagination & refresh data ------>
-        <b-button
-          variant="primary"
-          v-b-toggle:formCollapse
-          class="mt-1 actionButton"
-          v-show="!formStateCollapse"
-        >
-          <i class="fas fa-plus-circle"></i> Crear {{ type }}
-        </b-button>
-      </b-col>
-      <b-col cols="10">
-        <b-input-group class="mt-1" v-show="!formStateCollapse">
-          <b-form-input
-            v-model="filterSearch"
-            placeholder="Search..."
-            class="ml-1 mr-1 shadow-sm"
-            type="search"
-          ></b-form-input>
-          <b-pagination
-            class="ml-2 mr-2 shadow-sm"
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="mainTable"
-          ></b-pagination>
-          <b-form @submit.prevent="getData()">
-            <b-button variant="primary" type="submit" class="actionButton"
-              ><i class="fas fa-sync"></i
-            ></b-button>
-          </b-form>
-        </b-input-group>
-      </b-col>
-      <!-- Main Form ------------------------------------------------------------>
-      <component
-        :is="parent"
-        ref="component"
-        @hook:mounted="getData()"
-      ></component>
-    </b-row>
-    <!-- Results -------------------------------------------------------------->
-    <div class="mt-2 overflow-auto" v-show="!formStateCollapse">
-      <b-table
-        class="shadow-sm"
-        style="font-size:90%;"
-        responsive
-        id="mainTable"
-        :busy="busy"
-        :filter="filterSearch"
-        :total-rows="rows"
-        :fields="mainTableFields"
-        :items="items"
-        :per-page="perPage"
-        :current-page="currentPage"
-        hover
-        small
-      >
-        <template #table-busy>
-          <div class="text-center text-danger my-2">
-            <b-spinner class="align-middle"></b-spinner>
-          </div>
-        </template>
-        <template #cell(action)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
-          <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
-            <b-button
-              size="sm"
-              variant="outline-info"
-              @click="row.toggleDetails"
-              class="actionButton ml-1"
-              ><i class="fas fa-info"></i>
-              {{ row.detailsShowing ? '' : '' }}
-            </b-button>
-            <b-button
-              size="sm"
-              variant="outline-success"
-              v-b-toggle:formCollapse
-              @click="editComponent(row.item)"
-              class="actionButton ml-1"
-              ><i class="fas fa-edit fa-2x"></i
-            ></b-button>
-            <b-button
-              size="sm"
-              variant="outline-danger"
-              @click="deleteData(row.item)"
-              class="actionButton ml-1"
-              ><i class="fas fa-trash-alt fa-2x"></i
-            ></b-button>
-          </b-button-group>
-        </template>
-        <template #row-details="row">
-          <b-card>
-            <vue-json-pretty
-              :showDoubleQuotes="false"
-              :showIcon="true"
-              :data="row.item"
-            />
-          </b-card>
-        </template>
-      </b-table>
-    </div>
-    <!-- Children section -------------------------------------------------------------->
-    <hr style="border-top: 2px solid black"/>
-    <b-row class="mx-5">
-      <b-col>
-        <!-- Children Top: New button, search, pagination & refresh data -->
-        <b-button
-          variant="primary"
-          v-b-toggle:childFormCollapse
-          class="mt-1 actionButton"
-          v-show="!childFormStateCollapse"
-        >
-          <i class="fas fa-plus-circle"></i> Crear {{ childType }}
-        </b-button>
-      </b-col>
-      <b-col cols="10">
-        <b-input-group class="mt-1" v-show="!childFormStateCollapse">
-          <b-form-input
-            v-model="childFilterSearch"
-            placeholder="Search..."
-            class="ml-1 mr-1 shadow-sm"
-            type="search"
-          ></b-form-input>
-          <b-pagination
-            class="ml-2 mr-2 shadow-sm"
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="childTable"
-          ></b-pagination>
-          <b-form @submit.prevent="getData()">
-            <b-button variant="primary" type="submit" class="actionButton"
-              ><i class="fas fa-sync"></i
-            ></b-button>
-          </b-form>
-        </b-input-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col cols="4" v-show="childFormStateCollapse">
-        <!-- Children Main Form --------------------------------------------------->
-        <component
-          :is="children"
-          ref="component"
-        ></component>
-      </b-col>
-      <b-col>
-        <!-- Children Results ----------------------------------------------------->
-        <div class="mt-2 mx-5 overflow-auto">
-          <b-table
-            class="shadow-sm"
-            style="font-size:90%;"
-            responsive
-            id="childTable"
-            :busy="busy"
-            :filter="childFilterSearch"
-            :total-rows="rows"
-            :fields="childTableFields"
-            :items="items"
-            :per-page="childPerPage"
-            :current-page="childCurrentPage"
-            hover
-            small
+    <b-card
+      class="card-form"
+      v-bind:style="[
+        sideBarCollapsed == true
+          ? 'margin: 10px 30px 30px 75px; padding: 0px 0px 0px 0px;'
+          : 'margin: 10px 30px 30px 245px;padding: 0px 0px 0px 0px;'
+      ]"
+    >
+      <b-row>
+        <b-col>
+          <!-- Top: New button, search, pagination & refresh data ------>
+          <b-button
+            variant="primary"
+            v-b-toggle:formCollapse
+            class="mt-1 actionButton"
+            v-show="!parentFormStateCollapse"
           >
-            <template #table-busy>
-              <div class="text-center text-danger my-2">
-                <b-spinner class="align-middle"></b-spinner>
-              </div>
-            </template>
-            <template #cell(childAction)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
-              <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
-                <b-button
-                  size="sm"
-                  variant="outline-info"
-                  @click="row.toggleDetails"
-                  class="actionButton ml-1"
-                  ><i class="fas fa-info"></i>
-                  {{ row.detailsShowing ? '' : '' }}
-                </b-button>
-                <b-button
-                  size="sm"
-                  variant="outline-success"
-                  v-b-toggle:childFormCollapse
-                  @click="editComponent(row.item)"
-                  class="actionButton ml-1"
-                  ><i class="fas fa-edit fa-2x"></i
-                ></b-button>
-                <b-button
-                  size="sm"
-                  variant="outline-danger"
-                  @click="deleteData(row.item)"
-                  class="actionButton ml-1"
-                  ><i class="fas fa-trash-alt fa-2x"></i
-                ></b-button>
-              </b-button-group>
-            </template>
-            <template #row-details="row">
-              <b-card>
-                <vue-json-pretty
-                  :showDoubleQuotes="false"
-                  :showIcon="true"
-                  :data="row.item"
-                />
-              </b-card>
-            </template>
-          </b-table>
-        </div>
-      </b-col>
-    </b-row>
+            <i class="fas fa-plus-circle"></i> Crear {{ type }}
+          </b-button>
+        </b-col>
+        <b-col cols="10">
+          <b-input-group class="mt-1" v-show="!parentFormStateCollapse">
+            <b-form-input
+              v-model="filterSearch"
+              placeholder="Search..."
+              class="ml-1 mr-1 shadow-sm"
+              type="search"
+            ></b-form-input>
+            <b-pagination
+              class="ml-2 mr-2 shadow-sm"
+              v-model="currentParentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="mainTable"
+            ></b-pagination>
+            <b-form @submit.prevent="getData()">
+              <b-button variant="primary" type="submit" class="actionButton"
+                ><i class="fas fa-sync"></i
+              ></b-button>
+            </b-form>
+          </b-input-group>
+        </b-col>
+        <!-- Main Form ------------------------------------------------------------>
+        <component
+          :is="parent"
+          ref="parentComponent"
+          @hook:mounted="getData()"
+        ></component>
+      </b-row>
+      <!-- Results -------------------------------------------------------------->
+      <div class="mt-2 overflow-auto" v-show="!parentFormStateCollapse">
+        <b-table
+          class="shadow-sm"
+          style="font-size:90%;"
+          responsive
+          id="mainTable"
+          :parentBusy="parentBusy"
+          :filter="filterSearch"
+          :total-rows="rows"
+          :fields="mainTableFields"
+          :parentItems="parentItems"
+          :per-page="perPage"
+          :current-page="currentParentPage"
+          hover
+          small
+        >
+          <template #table-parentBusy>
+            <div class="text-center text-danger my-2">
+              <b-spinner class="align-middle"></b-spinner>
+            </div>
+          </template>
+          <template #cell(action)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
+            <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
+              <b-button
+                size="sm"
+                variant="outline-info"
+                @click="row.toggleDetails"
+                class="actionButton ml-1"
+                ><i class="fas fa-info"></i>
+                {{ row.detailsShowing ? '' : '' }}
+              </b-button>
+              <b-button
+                size="sm"
+                variant="outline-success"
+                v-b-toggle:formCollapse
+                @click="editParent(row.item)"
+                class="actionButton ml-1"
+                ><i class="fas fa-edit fa-2x"></i
+              ></b-button>
+              <b-button
+                size="sm"
+                variant="outline-danger"
+                @click="deleteData(row.item)"
+                class="actionButton ml-1"
+                ><i class="fas fa-trash-alt fa-2x"></i
+              ></b-button>
+            </b-button-group>
+          </template>
+          <template #row-details="row">
+            <b-card>
+              <vue-json-pretty
+                :showDoubleQuotes="false"
+                :showIcon="true"
+                :data="row.item"
+              />
+            </b-card>
+          </template>
+        </b-table>
+      </div>
+    </b-card>
+    <!-- Children section -------------------------------------------------------------->
+    <b-card v-if="parentFormStateCollapse && parentId != null"
+      class="card-form"
+      v-bind:style="[
+        sideBarCollapsed == true
+          ? 'margin: 10px 30px 30px 75px; padding: 0px 0px 0px 0px;'
+          : 'margin: 10px 30px 30px 245px;padding: 0px 0px 0px 0px;'
+      ]"
+    >
+      <b-row>
+        <b-col>
+          <!-- Children Top: New button, search, pagination & refresh data -->
+          <b-button
+            variant="primary"
+            v-b-toggle:childFormCollapse
+            class="mt-1 actionButton"
+            v-show="!childFormStateCollapse"
+          >
+            <i class="fas fa-plus-circle"></i> Crear {{ childType }}
+          </b-button>
+        </b-col>
+        <b-col cols="10">
+          <b-input-group class="mt-1" v-show="!childFormStateCollapse">
+            <b-form-input
+              v-model="childFilterSearch"
+              placeholder="Search..."
+              class="ml-1 mr-1 shadow-sm"
+              type="search"
+            ></b-form-input>
+            <b-pagination
+              class="ml-2 mr-2 shadow-sm"
+              v-model="currentChildPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="childTable"
+            ></b-pagination>
+            <b-form @submit.prevent="addChild()">
+              <b-button variant="primary" type="submit" class="actionButton"
+                ><i class="fas fa-sync"></i
+              ></b-button>
+            </b-form>
+          </b-input-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="4" v-show="childFormStateCollapse">
+          <!-- Children Main Form --------------------------------------------------->
+          <component
+            :is="children"
+            ref="childComponent"
+          ></component>
+        </b-col>
+        <b-col>
+          <!-- Children Results ----------------------------------------------------->
+          <div class="mt-2 overflow-auto">
+            <b-table
+              class="shadow-sm"
+              style="font-size:90%;"
+              responsive
+              id="childTable"
+              :parentBusy="parentBusy"
+              :filter="childFilterSearch"
+              :total-rows="rows"
+              :fields="childTableFields"
+              :parentItems="childItems"
+              :per-page="childPerPage"
+              :current-page="currentChildPage"
+              hover
+              small
+            >
+              <template #table-parentBusy>
+                <div class="text-center text-danger my-2">
+                  <b-spinner class="align-middle"></b-spinner>
+                </div>
+              </template>
+              <template #cell(childAction)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
+                <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
+                  <b-button
+                    size="sm"
+                    variant="outline-info"
+                    @click="row.toggleDetails"
+                    class="actionButton ml-1"
+                    ><i class="fas fa-info"></i>
+                    {{ row.detailsShowing ? '' : '' }}
+                  </b-button>
+                  <b-button
+                    size="sm"
+                    variant="outline-success"
+                    v-b-toggle:childFormCollapse
+                    @click="editChild(row.item)"
+                    class="actionButton ml-1"
+                    ><i class="fas fa-edit fa-2x"></i
+                  ></b-button>
+                  <b-button
+                    size="sm"
+                    variant="outline-danger"
+                    @click="deleteChild(row.item)"
+                    class="actionButton ml-1"
+                    ><i class="fas fa-trash-alt fa-2x"></i
+                  ></b-button>
+                </b-button-group>
+              </template>
+              <template #row-details="row">
+                <b-card>
+                  <vue-json-pretty
+                    :showDoubleQuotes="false"
+                    :showIcon="true"
+                    :data="row.item"
+                  />
+                </b-card>
+              </template>
+            </b-table>
+          </div>
+        </b-col>
+      </b-row>
+    </b-card>
   </div>
 </template>
 
@@ -218,59 +235,83 @@ import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
 export default {
-  name: 'NestedCrud',
-  props: ['parent', 'children', 'mainTableFields', 'childTableFields', 'type', 'childType'],
+  name: 'CrudNested',
+  props: ['parent', 'children', 'mainTableFields', 'childTableFields', 'parentType', 'childType'],
   data() {
     return {
-      busy: false,
+      parentId: null,
+      parentBusy: false,
       childBusy: false,
+      childEnabled: false,
       perPage: 10,
-      currentPage: 1,
+      currentParentPage: 1,
       childPerPage: 5,
-      childCurrentPage: 1,
-      formStateCollapse: false,
+      currentChildPage: 1,
+      parentFormStateCollapse: false,
       childFormStateCollapse: false,
       filterSearch: '',
       childFilterSearch: '',
-      items: [],
+      parentItems: [],
       childItems: [],
-      editingParent: [],
       deleteConfirm: '',
       options: ['list', 'of', 'options'],
       value:'',
     };
   },
   methods: {
-    getData() {
-      this.busy = true;
-      switch (this.type) {
-        default:
-          ClabtoolService.getData(this.type)
-            .then(data => {
-              this.items = data;
-            })
-            .catch(error => this.$parent.catchError(error));
+    getData(isChild = false, parentId = null) {
+      if( isChild ) {
+        this.childBusy = true;
+        switch( this.childType ) {
+          default:
+            ClabtoolService.getChildData(this.childType, parentId)
+              .then(data => {
+                this.childItems = data;
+              })
+              .catch(error => this.$parent.catchError(error));
+        }
+        this.childBusy = false;
+      } else {
+        this.parentBusy = true;
+        switch( this.parentType ) {
+          default:
+            ClabtoolService.getData(this.parentType)
+              .then(data => {
+                this.parentItems = data;
+              })
+              .catch(error => this.$parent.catchError(error));
+        }
+        this.parentBusy = false;
       }
-
-      this.busy = false;
     },
-    saveData(data) {
-      this.busy = true;
-
-      switch (this.type) {
-        default:
-          ClabtoolService.saveData(this.type, data)
+    saveData(data, isChild = false, parentId) {
+      if( isChild ) {
+        this.childBusy = true;
+        switch( this.childType ) {
+          default:
+            ClabtoolService.saveData(this.childType, data)
+              .then(data => {
+                this.showMessage(data.message);
+                this.getData(true, parentId);
+              })
+              .catch(error => this.$parent.catchError(error));
+        }
+      }
+      else {
+        this.parentBusy = true;
+        switch( this.parentType ) {
+          default:
+            ClabtoolService.saveData()
             .then(data => {
               this.showMessage(data.message);
               this.getData();
             })
-            .catch(error => this.$parent.catchError(error));
+        }
+        this.parentBusy = false;
       }
-
-      this.busy = false;
     },
     updateData(data) {
-      this.busy = true;
+      this.parentBusy = true;
 
       switch (this.type) {
         default:
@@ -282,12 +323,12 @@ export default {
             .catch(error => this.$parent.catchError(error));
       }
 
-      this.busy = false;
+      this.parentBusy = false;
     },
     deleteData(data) {
       this.deleteConfirm = '';
       this.$bvModal
-        .msgBoxConfirm('Are you sure?', {
+        .msgBoxConfirm('¿Estás seguro?', {
           title: '',
           okVariant: 'danger',
           okTitle: 'YES',
@@ -311,15 +352,13 @@ export default {
           }
         });
     },
-    saveChildData(data) {
-      this.items
-    },
+
     showMessage(message) {
       this.$parent.showMsgBoxConfirm(message, 'success', 'Success', 'sm');
     },
-    editComponent(item) {
-      this.$refs.component.loadItem(item);
-      
+    editParent(item) {
+      this.$refs.parentComponent.loadItem(item);
+      this.parentId = item.id;
     },
     catchError(error) {
       this.$parent.catchError(error);
@@ -327,13 +366,13 @@ export default {
   },
   computed: {
     rows() {
-      return this.items.length;
+      return this.parentItems.length;
     }
   },
   mounted() {
     this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
       if (collapseId == 'formCollapse') {
-        this.formStateCollapse = isJustShown;
+        this.parentFormStateCollapse = isJustShown;
       } else if( collapseId == 'childFormCollapse' ) {
         this.childFormStateCollapse = isJustShown;
       }

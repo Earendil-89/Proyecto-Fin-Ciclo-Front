@@ -7,6 +7,7 @@
         :collapsed="sideBarCollapsed"
         @toggle-collapse="onToggleCollapse"
       >
+        <template v-slot:toggle-icon><i class="fas fa-ellipsis-h"></i></template>
       </sidebar-menu>
       <b-card
         class="card-form"
@@ -27,14 +28,18 @@
 export default {
   data() {
     return {
+      userId: null,
+      password: '',
       sideBarCollapsed: false,
       sideBarMenu: [ {
           header: 'Menu principal',
           hiddenOnCollapse: false
         },
-        { href: '/usuario', title: 'Usuario', icon: 'fa  fa-code-branch' },
-        { href: '/frase', title: 'Frase', icon: 'fa  fa-code-branch' },
-        { href: '/armario', title: 'Almacenamiento', icon: 'fa fa-code-branch' }
+        { href: '/usuario', title: 'Gestión usuarios', icon: 'fas fa-user' },
+        { href: '/frase', title: 'Frases seguridad', icon: 'fas fa-exclamation-triangle' },
+        { href: '/armario', title: 'Almacenamiento', icon: 'fas fa-box' },
+        { href: '/etiqueta', title: 'Etiquetado seguridad', icon: 'fas fa-exclamation-triangle'},
+        { href: '/compuesto', title: 'Compuestos químicos', icon :'fas fa-atom' }
       ]
     };
   },
@@ -97,7 +102,7 @@ export default {
 }
 body
 {
-  background-image: linear-gradient(#eae8e8, #ebe9e9);
+  background-image: linear-gradient(#e8e8ea, #ebe9e9);
 }
 .card-login {
   max-width: 350px;
@@ -109,7 +114,7 @@ body
     0 1px 8px 0 rgba(0, 0, 0, 0.12);
 }
 .card-form {
-  background-color: #f7f7f7;
+  background-color: #edffde;
   margin: 0px 0px 0px 0px;
   padding: auto;
   border-color: #ffffff;

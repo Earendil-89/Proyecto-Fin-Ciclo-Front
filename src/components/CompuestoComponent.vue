@@ -2,32 +2,39 @@
   <div>
     <b-collapse id="formCollapse">
       <b-form @submit.prevent="processForm">
-        <h4 class="mt-4 mb-3">Usuario</h4>
+        <h4 class="mt-4 mb-3">Compuesto</h4>
         <b-row class="mb-1">
+          <b-col cols="2">
+            <label for="cas" class="form-label">Número CAS</label>
+            <b-form-input v-model="cas" id="cas" :state="validField(cas)"></b-form-input>
+            <b-form-invalid-feedback :state="validField(cas)">Debe introducir apellidos</b-form-invalid-feedback>
+          </b-col>
           <b-col>
-            <label for="Nombre" class="form-label">Nombre</label>
-            <b-form-input v-model="nombre" id="Nombre" :state="validField(nombre)"></b-form-input>
+            <label for="nombre" class="form-label">Nombre</label>
+            <b-form-input v-model="nombre" id="nombre" :state="validField(nombre)"></b-form-input>
             <b-form-invalid-feedback :state="validField(nombre)">Debe introducir un nombre</b-form-invalid-feedback>
-          </b-col>
-          <b-col>
-            <label for="Apellidos" class="form-label">Apellidos</label>
-            <b-form-input v-model="apellidos" id="Apellidos" :state="validField(apellidos)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(apellidos)">Debe introducir apellidos</b-form-invalid-feedback>
-          </b-col>
-          <b-col cols="3">
-            <label for="Password" class="form-label">Contraseña</label>
-            <div class="d-md-flex">
-                <b-form-input v-model="password" id="Password" :state="validField(password)"></b-form-input>
-              <b-button class="ml-2" variant="outline-primary" @click="copyPassword"><i class="fas fa-clipboard-list"></i></b-button>
-            </div>
-            <b-form-invalid-feedback :state="validField(password)">El campo contraseña no puede estar vacio</b-form-invalid-feedback>
           </b-col>
         </b-row>
         <b-row class="mb-3">
           <b-col>
-            <label for="Email" class="form-label">Email</label>
-            <b-form-input v-model="email" id="Email" :state="validField(email)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(email)">Debde introducir una dirección de correo electrónico</b-form-invalid-feedback>
+            <label for="nombre-secundario" class="form-label">Otros nombres</label>
+            <b-form-input v-model="nombreSecundario" id="nombre-secundario"></b-form-input>
+          </b-col>
+        </b-row>
+        <b-row class="mb-3">
+          <b-col>
+            <label for="formula" class="form-label">Fórmula empírica</label>
+            <b-form-input v-model="formula" id="formula"></b-form-input>
+          </b-col>
+          <b-col>
+            <label for="peso-molecular" class="form-label">Peso molecular</label>
+            <b-form-input v-model="pesoMolecular" id="peso-molecular"></b-form-input>
+          </b-col>
+        </b-row>
+        <b-row class="mb-3">
+          <b-col>
+            <label for="img-url" class="form-label">Url de la imagen</label>
+            <b-form-input v-model="imgUrl" id="img-url"></b-form-input>
           </b-col>
         </b-row>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -43,7 +50,7 @@
             type="submit"
             class="actionButton"
             v-b-toggle:formCollapse
-            :disabled="!validField(nombre) || !validField(apellidos) || !validField(password) || !validField(email)"
+            :disabled="!validField(cas) || !validField(nombre)"
             ><i class="far fa-check-circle mr-1"></i
             >{{ txtBtnForm }}</b-button
           >
@@ -56,16 +63,17 @@
 <script>
 
 export default {
-  name: 'Usuario',
+  name: 'Compuesto',
   data() {
     return {
       // -- Campos del usuario
       id: null,
+      cas: '',
       nombre: '',
-      apellidos: '',
-      email: '',
-      password: '',
-      roles: [{id:1, rol:'ROL_USUARIO' },{id:2,rol:'ROL_TECNICO'},{id:3,rol:'ROL_ADMINISTRADOR'}],
+      nombreSecundario: '',
+      formula: '',
+      pesoMolecular: '',
+      imgUrl: '',
       //--------------------
       // -- Campos del componente
       perPage: 10,
@@ -78,22 +86,24 @@ export default {
     processForm() {
       if (this.editState == false) {
         var dataSave = {
+          cas: this.cas,
           nombre: this.nombre,
-          apellidos: this.apellidos,
-          email: this.email,
-          password: this.password,
-          roles: this.roles
+          nombreSecundario: this.nombreSecundario,
+          formula: this.formula,
+          pesoMolecular: this.pesoMolecular,
+          imgUrl: this.imgUrl
         };
 
         this.$parent.saveData(dataSave);
       } else {
         var dataUpdate = {
           id: this.id,
+          cas: this.cas,
           nombre: this.nombre,
-          apellidos: this.apellidos,
-          email: this.email,
-          password: this.password,
-          roles: this.roles
+          nombreSecundario: this.nombreSecundario,
+          formula: this.formula,
+          pesoMolecular: this.pesoMolecular,
+          imgUrl: this.imgUrl
         };
 
         this.$parent.updateData(dataUpdate);
@@ -103,17 +113,24 @@ export default {
     },
     reset() {
       this.id = null;
+      this.cas = '';
       this.nombre = '';
+      this.nombreSecundario = '';
+      this.formula = '';
+      this.pesoMolecular = '';
+      this.imgUrl = '';
+
       this.txtBtnForm = 'Guardar';
       this.editState = false;
     },
     loadItem(item) {
       this.id = item.id;
+      this.cas = item.cas;
       this.nombre = item.nombre;
-      this.apellidos = item.apellidos;
-      this.password = item.password;
-      this.email = item.email;
-      this.roles = item.roles;
+      this.nombreSecundario = item.nombreSecundario;
+      this.formula = item.formula;
+      this.pesoMolecular = item.pesoMolecular;
+      this.imgUrl = item.imgUrl;
       this.txtBtnForm = 'Actualizar';
       this.editState = true;
     },

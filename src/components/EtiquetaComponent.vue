@@ -1,25 +1,31 @@
 <template>
   <div>
-    <b-collapse id="childFormCollapse">
+    <b-collapse id="formCollapse">
       <b-form @submit.prevent="processForm">
-        <h4 class="mt-4 mb-3">Armarios</h4>
-        <b-col class="mb-3">
-          <b-row>
-            <label for="nombre" class="form-label">Código</label>
-            <b-form-input v-model="nombre" id="nombre" :state="validField(nombre)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(nombre)">Debe introducir un nombre</b-form-invalid-feedback>
-          </b-row>
-          <b-row class="mt-4">
+        <h4 class="mt-4 mb-3">Etiquetas</h4>
+        <b-row class="mb-3">
+          <b-col cols="2">
+            <label for="codigo" class="form-label">Código</label>
+            <b-form-input v-model="codigo" id="codigo" :state="validField(codigo)"></b-form-input>
+            <b-form-invalid-feedback :state="validField(codigo)">Debe introducir un código</b-form-invalid-feedback>
+          </b-col>
+          <b-col>
             <label for="descripcion" class="form-label">Descripción</label>
             <b-form-input v-model="descripcion" id="descripcion" :state="validField(descripcion)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(descripcion)">Debe introducir una descripcion</b-form-invalid-feedback>
-          </b-row>
-        </b-col>
+            <b-form-invalid-feedback :state="validField(descripcion)">Debe introducir un código</b-form-invalid-feedback>
+          </b-col>
+        </b-row>
+        <b-row class="mb-3">
+          <b-col>
+            <label for="imgUrl" class="form-label">Url de la imagen</label>
+            <b-form-input v-model="imgUrl" id="imgUrl"></b-form-input> 
+          </b-col>         
+        </b-row>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
           <b-button
             variant="outline-danger"
             class="actionButton"
-            v-b-toggle:childFormCollapse
+            v-b-toggle:formCollapse
             @click="reset()"
             ><i class="far fa-times-circle mr-1"></i>Cancelar</b-button
           >
@@ -27,7 +33,7 @@
             variant="outline-success"
             type="submit"
             class="actionButton"
-            v-b-toggle:childFormCollapse
+            v-b-toggle:formCollapse
             ><i class="far fa-check-circle mr-1"></i
             >{{ txtBtnForm }}</b-button
           >
@@ -36,15 +42,16 @@
     </b-collapse>
   </div>
 </template>
-
+  
 <script>
   export default {
-    name: 'Estante',
+    name: 'Etiqueta',
     data() {
       return {
         id: null,
-        nombre: '',
+        codigo: '',
         descripcion: '',
+        imgUrl: '',
         //--------------------
         perPage: 10,
         currentPage: 1,
@@ -56,35 +63,38 @@
       processForm() {
         if (this.editState == false) {
           var dataSave = {
-            id : this.id,
-            nombre: this.nombre,
-            descripcion: this.descripcion
+            codigo: this.codigo,
+            descripcion: this.descripcion,
+            imgUrl: this.imgUrl
           };
   
-          this.$parent.saveChild(dataSave);
+          this.$parent.saveData(dataSave);
         } else {
           var dataUpdate = {
             id: this.id,
-            nombre: this.nombre,
-            descripcion: this.descripcion
+            codigo: this.codigo,
+            descripcion: this.descripcion,
+            imgUrl: this.imgUrl
           };
   
-          this.$parent.updateChild(dataUpdate);
+          this.$parent.updateData(dataUpdate);
         }
   
         this.reset();
       },
       reset() {
-        this.id = null;
-        this.nombre = '';
+        this.id = '';
+        this.codigo = '';
         this.descripcion = '';
+        this.imgUrl = '';
         this.txtBtnForm = 'Guardar';
         this.editState = false;
       },
       loadItem(item) {
         this.id = item.id;
-        this.nombre = item.nombre;
+        this.codigo = item.codigo;
         this.descripcion = item.descripcion;
+        this.imgUrl = item.imgUrl;
         this.txtBtnForm = 'Actualizar';
         this.editState = true;
       },
