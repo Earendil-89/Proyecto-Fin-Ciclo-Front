@@ -38,7 +38,13 @@
                 <b-form-invalid-feedback :state="compuesto != null">Debde especificar el compuesto químico</b-form-invalid-feedback>
               </b-col>
               <b-col cols="1">
-                <b-button variant="primary" v-show="!selectCompuestoState"><i class="fas fa-search" @click="showSelectionCompuesto"></i></b-button>
+                <b-button
+                  variant="primary"
+                  v-if="!selectCompuestoState"
+                  @click="showSelectionCompuesto"
+                >
+                  <i class="fas fa-search"></i>
+                </b-button>
               </b-col>
               <b-col cols="2"></b-col>
             </b-row>
@@ -198,22 +204,24 @@ export default {
     processForm() {
       if (this.editState == false) {
         var dataSave = {
+          codigo: this.codigo,
           nombre: this.nombre,
-          apellidos: this.apellidos,
-          email: this.email,
-          password: this.password,
-          roles: this.roles
+          pureza: this.pureza,
+          cantidad: this.cantidad,
+          unidades: this.unidades,
+          compuesto: this.compuesto
         };
 
         this.$parent.saveData(dataSave);
       } else {
         var dataUpdate = {
           id: this.id,
+          codigo: this.codigo,
           nombre: this.nombre,
-          apellidos: this.apellidos,
-          email: this.email,
-          password: this.password,
-          roles: this.roles
+          pureza: this.pureza,
+          cantidad: this.cantidad,
+          unidades: this.unidades,
+          compuesto: this.compuesto
         };
 
         this.$parent.updateData(dataUpdate);
