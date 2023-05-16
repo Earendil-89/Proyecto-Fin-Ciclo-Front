@@ -65,6 +65,15 @@
         <template #cell(image)="row" align="center">
           <img :src='row.item.imgUrl' height="64">
         </template>
+        <template #cell(image_inside)="row" align="center">
+          <img :src='row.item.compuesto.imgUrl' height="64">
+        </template>
+        <template #cell(cantidad)="row" align="left">
+          {{ row.item.cantidad + ' ' + convertUnidades(row.item.unidades) }}
+        </template>
+        <template #cell(pureza)="row" align="center">
+          {{ row.item.pureza }}%
+        </template>
         <template #cell(action)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
           <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
             <b-button
@@ -132,6 +141,13 @@ export default {
       this.busy = true;
 
       switch (this.type) {
+        case 'solicitud':
+          ClabtoolService.getData('usuario/1/solicitud')
+            .then(data => {
+              this.items = data;
+            })
+            .catch(error => this.$parent.catchError(error)); 
+          break;       
         default:
           ClabtoolService.getData(this.type)
             .then(data => {
@@ -207,6 +223,17 @@ export default {
     },
     catchError(error) {
       this.$parent.catchError(error);
+    },
+    convertUnidades(unidades) {
+      switch( unidades ) {
+        case 'UNIDAD_MICROLITROS': return 'ul';
+        case 'UNIDAD_MILILITROS': return 'ml';
+        case 'UNIDAD_LITROS': return 'l';
+        case 'UNIDAD_MILIGRAMOS': return 'mg';
+        case 'UNIDAD_GRAMOS': return 'k';
+        case 'UNIDAD_KILOGRAMOS': return 'kg';
+        default: return '';
+      }
     }
   },
   computed: {
@@ -228,6 +255,7 @@ export default {
     "compuesto-dynamic": () => import("./CompuestoComponent.vue"),
     "fecha-dynamic": () => import("./FechaComponent.vue"),
     "envase-dynamic": () => import("./EnvasePropComponent.vue"),
+    "solicitud-dynamic": () => import("./SolicitudComponent.vue"),
     VueJsonPretty
 }
 };
