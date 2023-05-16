@@ -40,7 +40,9 @@ export default {
         { href: '/armario', title: 'Almacenamiento', icon: 'fas fa-box' },
         { href: '/etiqueta', title: 'Etiquetado seguridad', icon: 'fas fa-exclamation-triangle'},
         { href: '/compuesto', title: 'Compuestos químicos', icon :'fas fa-atom' },
-        { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' }
+        { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' },
+        { href: '/gestionSolicitud', title: 'Gestión solicitudes', icon: 'fas fa-cogs' },
+        { href: '/usuario/solicitud', title: 'Mis solicitudes', icon: 'fas fa-plus-square'}
       ]
     };
   },
