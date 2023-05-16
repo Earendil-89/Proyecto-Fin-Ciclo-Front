@@ -63,6 +63,18 @@ export const router = new Router({
         mainTableFields: Vue.prototype.$constants().envaseTableFields,
         type: 'envaseProp'
       }
+    },
+    {
+      path: '/admin/solicitud',
+      component: () => import('./views/SolicitudAdmin.vue')
+    },
+    {
+      path: '/usuario/solicitud',
+      component: () => import ('./components/Crud.vue'),
+      props: { current: "solicitud-dynamic",
+        mainTableFields: Vue.prototype.$constants().solicitudUsuarioTableFields,
+        type: 'solicitud'
+      }
     }
   ]
 });
