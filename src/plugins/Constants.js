@@ -5,7 +5,8 @@ export default {
         VERSION: '1.0.0',
         usuarioTableFields: [
           { key: 'nombre', label: 'Nombre', sortable: true },
-          { key: 'nif', label: 'DNI', sortable: true },
+          { key: 'apellidos', label: 'Apellidos', sortable: true },
+          { key: 'email', label: 'Email' },
           { key: 'action', label: '', thStyle: { width: '120px'} }
         ],
         fraseTableFields: [
@@ -21,7 +22,8 @@ export default {
         estanteTableFields: [
           { key: 'nombre', label: 'Nombre', sortable: true },
           { key: 'descripcion', label: 'Descripcion', sortable: true },
-          { key: 'childAction', label: '', thStyle: { width: '120px'} }          
+          { key: 'armario.nombre', label: 'Armario', sortable: true },
+          { key: 'action', label: '', thStyle: { width: '120px' }  }
         ],
         etiquetaTableFields: [
           { key: 'codigo', label: 'Código', sortable: true },
