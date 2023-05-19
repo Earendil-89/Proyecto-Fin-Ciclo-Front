@@ -159,7 +159,21 @@ export default {
               }
             })
             .catch(error => this.$parent.catchError(error));           
-          break;      
+          break;  
+
+        case 'envaseProp':
+          ClabtoolService.getData(this.type)
+            .then(data => {
+              this.items = data;
+            })
+            .catch(error => this.$parent.catchError(error)); 
+
+          ClabtoolService.getData('unidad')
+            .then(data => {
+              this.$refs.component.generateListUnidades(data);
+            })
+            .catch(error => this.$parent.catchError(error));   
+          break;
         /*
         case 'solicitud':
           ClabtoolService.getData('usuario/1/solicitud')

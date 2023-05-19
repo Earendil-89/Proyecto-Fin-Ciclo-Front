@@ -16,7 +16,7 @@
           </b-col>
           <b-col cols="2">
             <label for="pureza" class="form-label">Pureza (%)</label>
-              <b-form-input v-model="pureza" id="pureza"></b-form-input>
+              <b-form-input v-model="pureza" id="pureza" type="number" min="0.0" max="100.0" step="any"></b-form-input>
           </b-col>
         </b-row>
         <b-row class="mb-3">
@@ -83,7 +83,7 @@
             type="submit"
             class="actionButton"
             v-b-toggle:formCollapse
-            :disabled="!validField(codigo) || !validField(nombre) || !validField(capacidad) || !validField(unidades) || alertVariant === 'danger'"
+            :disabled="!validField(codigo) || !validField(nombre) || !validField(capacidad) || unidades == null || alertVariant === 'danger'"
             ><i class="far fa-check-circle mr-1"></i
             >{{ txtBtnForm }}</b-button
           >
@@ -221,15 +221,7 @@ export default {
       txtBtnForm: 'Guardar',
       editState: false,
       // -- Lista de unidades
-      listUnidades: [ 
-        { value: null, text: 'Elija una opción' },
-        { value: 'UNIDAD_MICROLITROS', text: 'Microlitros'},
-        { value: 'UNIDAD_MILILITROS', text: 'Mililitros'},
-        { value: 'UNIDAD_LITROS', text: 'Litros'},
-        { value: 'UNIDAD_MILIGRAMOS', text: 'Miligramos'},
-        { value: 'UNIDAD_GRAMOS', text: 'Gramos'},
-        { value: 'UNIDAD_KILOGRAMOS', text: 'Kilogramos'},
-      ],
+      listUnidades: null,
       // -- Seccion de la seleccion del compuesto quimico
       filterSearchCompuesto: '',
       compuestoTableFields: [
@@ -347,6 +339,14 @@ export default {
     },
     modalEtiquetas(button) {
       this.$root.$emit('bv::show::modal', 'modal-etiquetas', button);     
+    },
+    generateListUnidades(data) {
+      this.listUnidades = [ { value: null, text: 'Elija una opción' } ];
+      for( let i = 0; i < data.length; i++ ) {
+        this.listUnidades.push(
+          { value: data[i], text: data[i].nombre }
+        );
+      }
     }
   },
   computed: {
