@@ -33,13 +33,13 @@
           </b-form>
         </b-input-group>
       </b-col>
-      <!-- Main Form ------------------------------------------------------------>
+      <!-- Formulario principal ------------------------------------------------------------>
       <component
         :is="current"
         ref="component"
         @hook:mounted="getData()"
       ></component>
-      <!-- Results -------------------------------------------------------------->
+      <!-- Resultados de las consultas a la BBDD -------------------------------------------------------------->
     </b-row>
     <div class="mt-2 overflow-auto" v-show="!formStateCollapse">
       <b-table
@@ -57,6 +57,7 @@
         hover
         small
       >
+        <!-- Table templates ---------------------------------------------------->
         <template #table-busy>
           <div class="text-center text-danger my-2">
             <b-spinner class="align-middle"></b-spinner>
@@ -141,13 +142,32 @@ export default {
       this.busy = true;
 
       switch (this.type) {
+        case 'estante':
+          this.$refs.component.armarios = [];
+          ClabtoolService.getData(this.type)
+            .then(data => {
+              this.items = data;
+            })
+            .catch(error => this.$parent.catchError(error)); 
+
+            ClabtoolService.getData('armario')
+            .then(data => {
+              for( let i = 0; i < data.length; i++ ) {
+                this.$refs.component.armarios.push( {
+                  value: data[i], text: data[i].nombre
+                })
+              }
+            })
+            .catch(error => this.$parent.catchError(error));           
+          break;      
+        /*
         case 'solicitud':
           ClabtoolService.getData('usuario/1/solicitud')
             .then(data => {
               this.items = data;
             })
             .catch(error => this.$parent.catchError(error)); 
-          break;       
+          break;       */
         default:
           ClabtoolService.getData(this.type)
             .then(data => {
@@ -165,7 +185,7 @@ export default {
         default:
           ClabtoolService.saveData(this.type, data)
             .then(data => {
-              this.showMessage(data.message);
+              this.showMessage(data.status, data.message);
               this.getData();
             })
             .catch(error => this.$parent.catchError(error));
@@ -180,7 +200,7 @@ export default {
         default:
           ClabtoolService.updateData(this.type, data)
             .then(data => {
-              this.showMessage(data.message);
+              this.showMessage(data.status, data.message);
               this.getData();
             })
             .catch(error => this.$parent.catchError(error));
@@ -207,7 +227,7 @@ export default {
               default:
                 ClabtoolService.deleteData(this.type, data.id)
                   .then(data => {
-                    this.showMessage(data.message);
+                    this.showMessage(data.status, data.message);
                     this.getData();
                   })
                   .catch(error => this.$parent.catchError(error));
@@ -215,8 +235,10 @@ export default {
           }
         });
     },
-    showMessage(message) {
-      this.$parent.showMsgBoxConfirm(message, 'success', 'Success', 'sm');
+    showMessage(status, message) {
+      const stat = status == 0 ? 'success' : 'danger';
+      const title = status == 0? 'Success' : 'Danger';
+      this.$parent.showMsgBoxConfirm(message, stat, title, 'sm');
     },
     editComponent(item) {
       this.$refs.component.loadItem(item);
@@ -234,7 +256,10 @@ export default {
         case 'UNIDAD_KILOGRAMOS': return 'kg';
         default: return '';
       }
-    }
+    },
+    editEstantes(item) {
+      this.$refs.component.launchModal(item);
+    },
   },
   computed: {
     rows() {
@@ -253,10 +278,12 @@ export default {
     "frase-dynamic": () => import("./FraseComponent.vue"),
     "etiqueta-dynamic": () => import("./EtiquetaComponent.vue"),
     "compuesto-dynamic": () => import("./CompuestoComponent.vue"),
-    "fecha-dynamic": () => import("./FechaComponent.vue"),
     "envase-dynamic": () => import("./EnvasePropComponent.vue"),
     "solicitud-dynamic": () => import("./SolicitudComponent.vue"),
+    "solicitudUser-dynamic": () => import("./SolicitudComponent.vue"),
+    "armario-dynamic": () => import("./ArmarioComponent.vue"),
+    "estante-dynamic": () => import("./EstanteComponent.vue"),
     VueJsonPretty
-}
+  }
 };
 </script>
