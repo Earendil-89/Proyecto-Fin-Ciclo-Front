@@ -17,18 +17,12 @@
         </b-row>
         <b-row class="mb-3">
           <b-col>
-            <label for="nombre-secundario" class="form-label">Otros nombres</label>
-            <b-form-input v-model="nombreSecundario" id="nombre-secundario"></b-form-input>
-          </b-col>
-        </b-row>
-        <b-row class="mb-3">
-          <b-col>
             <label for="formula" class="form-label">Fórmula empírica</label>
             <b-form-input v-model="formula" id="formula"></b-form-input>
           </b-col>
           <b-col>
             <label for="peso-molecular" class="form-label">Peso molecular</label>
-            <b-form-input v-model="pesoMolecular" id="peso-molecular"></b-form-input>
+            <b-form-input v-model="pesoMolecular" id="peso-molecular" type="number" min="0.0" step="any"></b-form-input>
           </b-col>
         </b-row>
         <b-row class="mb-3">
@@ -70,7 +64,6 @@ export default {
       id: null,
       cas: '',
       nombre: '',
-      nombreSecundario: '',
       formula: '',
       pesoMolecular: '',
       imgUrl: '',
@@ -88,7 +81,6 @@ export default {
         var dataSave = {
           cas: this.cas,
           nombre: this.nombre,
-          nombreSecundario: this.nombreSecundario,
           formula: this.formula,
           pesoMolecular: this.pesoMolecular,
           imgUrl: this.imgUrl
@@ -100,7 +92,6 @@ export default {
           id: this.id,
           cas: this.cas,
           nombre: this.nombre,
-          nombreSecundario: this.nombreSecundario,
           formula: this.formula,
           pesoMolecular: this.pesoMolecular,
           imgUrl: this.imgUrl
@@ -115,7 +106,6 @@ export default {
       this.id = null;
       this.cas = '';
       this.nombre = '';
-      this.nombreSecundario = '';
       this.formula = '';
       this.pesoMolecular = '';
       this.imgUrl = '';
@@ -127,7 +117,6 @@ export default {
       this.id = item.id;
       this.cas = item.cas;
       this.nombre = item.nombre;
-      this.nombreSecundario = item.nombreSecundario;
       this.formula = item.formula;
       this.pesoMolecular = item.pesoMolecular;
       this.imgUrl = item.imgUrl;
