@@ -21,9 +21,9 @@
         </b-row>
         <b-row class="mb-3">
           <b-col cols="2">
-            <label for="cantidad" class="form-label">Cantidad</label>
-            <b-form-input v-model="cantidad" id="Email" type="number" min="0.0" :state="validField(cantidad)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(cantidad)">Debde introducir la cantidad de producto</b-form-invalid-feedback>
+            <label for="capacidad" class="form-label">Capacidad</label>
+            <b-form-input v-model="capacidad" id="Email" type="number" min="0.0" :state="validField(capacidad)"></b-form-input>
+            <b-form-invalid-feedback :state="validField(capacidad)">Debde introducir la capacidad de producto</b-form-invalid-feedback>
           </b-col>
           <b-col cols="2">
             <label for="unidades" class="form-label">Unidades</label>
@@ -50,6 +50,26 @@
             </b-row>
           </b-col>         
         </b-row>
+        <b-row>
+          <b-col cols="3">
+            <b-button
+              variant="outline-primary"
+              class="actionButton"
+              @click="modalEtiquetas"
+            >
+            <i class="fas fa-exclamation-circle"></i> Etiquetado de seguridad
+            </b-button>
+          </b-col>
+          <b-col cols="3">
+            <b-button
+              variant="outline-primary"
+              class="actionButton"
+              @click="modalFrases"
+            >
+            <i class="fas fa-exclamation-circle"></i> Frases de seguridad
+            </b-button>
+          </b-col>
+        </b-row>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
           <b-button
             variant="outline-danger"
@@ -63,7 +83,7 @@
             type="submit"
             class="actionButton"
             v-b-toggle:formCollapse
-            :disabled="!validField(codigo) || !validField(nombre) || !validField(cantidad) || !validField(unidades) || alertVariant === 'danger'"
+            :disabled="!validField(codigo) || !validField(nombre) || !validField(capacidad) || !validField(unidades) || alertVariant === 'danger'"
             ><i class="far fa-check-circle mr-1"></i
             >{{ txtBtnForm }}</b-button
           >
@@ -148,28 +168,53 @@
         </template>
       </b-table>
     </b-card>
+    <b-modal
+      id="modal-frases"
+      title="Frases de seguridad"
+      size="lg"
+    >
+      <SeguridadModal
+        type="frase"
+        :tableFields="fraseTableFields"
+        v-model="frases"
+      ></SeguridadModal>
+    </b-modal>
+    <b-modal
+      id="modal-etiquetas"
+      title="Frases de seguridad"
+      size="lg"
+    >
+      <SeguridadModal
+        type="etiqueta"
+        :tableFields="etiquetaTableFields"
+        v-model="etiquetas"
+      ></SeguridadModal>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import VueJsonPretty from 'vue-json-pretty';
+import SeguridadModal from './SeguridadModal.vue';
+
 export default {
   name: 'EnvaseProp',
   data() {
     return {
-      // -- Campos del usuario
-      test:'Hola',
+      // -- 
       id: null,
       codigo: '',
       nombre: '',
       pureza: '',
-      cantidad: '',
+      capacidad: '',
       unidades: null,
       compuesto: {
         cas: '',
         nombre: 'Debe elegir un compuesto químico'
       },
+      frases: [],
+      etiquetas: [],
       // -- Campos del componente
       perPage: 10,
       currentPage: 1,
@@ -193,6 +238,15 @@ export default {
         { key: 'image', label: 'Imagen', thStyle: { width: '96px' } },
         { key: 'action', label: '', thStyle: { width: '80px' } }
       ],
+      fraseTableFields: [
+        { key: 'codigo', label: 'Código', sortable: true, thStyle: { width: '100px' } },
+        { key: 'descripcion', label: 'Descripción', sortable: true }
+      ],
+      etiquetaTableFields: [
+        { key: 'codigo', label: 'Código', sortable: true },
+        { key: 'descripcion', label: 'Descripción', sortable: true },
+        { key: 'image', label: 'Imagen', thStyle: { width: '100px'} },      
+      ],
       selectCompuestoState: false,
       compuestoItems: [],
       perPageCompuesto: 5,
@@ -207,9 +261,11 @@ export default {
           codigo: this.codigo,
           nombre: this.nombre,
           pureza: this.pureza,
-          cantidad: this.cantidad,
+          capacidad: this.capacidad,
           unidades: this.unidades,
-          compuesto: this.compuesto
+          compuesto: this.compuesto,
+          frases: this.frases,
+          etiquetas: this.etiquetas
         };
 
         this.$parent.saveData(dataSave);
@@ -219,9 +275,11 @@ export default {
           codigo: this.codigo,
           nombre: this.nombre,
           pureza: this.pureza,
-          cantidad: this.cantidad,
+          capacidad: this.capacidad,
           unidades: this.unidades,
-          compuesto: this.compuesto
+          compuesto: this.compuesto,
+          frases: this.frases,
+          etiquetas: this.etiquetas
         };
 
         this.$parent.updateData(dataUpdate);
@@ -234,27 +292,37 @@ export default {
       this.codigo = '';
       this.nombre = '';
       this.pureza = '';
-      this.cantidad = '';
+      this.capacidad = '';
       this.unidades = null;
       this.compuesto = { cas: '', nombre: 'Debe elegir un compuesto químico' };
       this.selectCompuestoState = false;
+      this.frases = [];
+      this.etiquetas = [];
 
       this.txtBtnForm = 'Guardar';
       this.editState = false;
     },
     loadItem(item) {
       this.id = item.id;
+      this.codigo = item.codigo;
       this.nombre = item.nombre;
-      this.apellidos = item.apellidos;
-      this.password = item.password;
-      this.email = item.email;
-      this.roles = item.roles;
+      this.pureza = item.pureza;
+      this.capacidad = item.capacidad;
+      this.unidades = item.unidades;
+      this.compuesto = item.compuesto;
+      this.frases = item.frases;
+      this.etiquetas = item.etiquetas;
+      this.selectCompuestoState = false;
+
       this.txtBtnForm = 'Actualizar';
       this.editState = true;
     },
     validField(field) {
-      if( field == null )
+      if( field === null )
         return false;
+
+      if( typeof field == 'number' )
+        return true;
 
       return field.length > 0;
     },
@@ -273,6 +341,12 @@ export default {
       this.compuesto = compuesto;
       this.compuestoItems = [];
       this.selectCompuestoState = false;
+    },
+    modalFrases(button) {
+      this.$root.$emit('bv::show::modal', 'modal-frases', button);
+    },
+    modalEtiquetas(button) {
+      this.$root.$emit('bv::show::modal', 'modal-etiquetas', button);     
     }
   },
   computed: {
@@ -286,6 +360,7 @@ export default {
   mounted() {
   },
   components: {
+    SeguridadModal,
     VueJsonPretty
   }
 };
