@@ -55,7 +55,7 @@
       processForm() {
         if (this.editState == false) {
           var dataSave = {
-            nomre: this.nombre,
+            nombre: this.nombre,
             descripcion: this.descripcion
           };
   
@@ -76,6 +76,7 @@
         this.id = null;
         this.nombre = '';
         this.descripcion = '';
+
         this.txtBtnForm = 'Guardar';
         this.editState = false;
       },
@@ -83,12 +84,13 @@
         this.id = item.id;
         this.nombre = item.nombre;
         this.descripcion = item.descripcion;
+
         this.txtBtnForm = 'Actualizar';
         this.editState = true;
       },
       validField(element) {
         return element != null && element.length > 0;
-      }
+      },
     },
     computed: {
     },
