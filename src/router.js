@@ -84,6 +84,14 @@ export const router = new Router({
         mainTableFields: Vue.prototype.$constants().solicitudUsuarioTableFields,
         type: 'solicitud'
       }
+    },
+    {
+      path: '/manager/envase',
+      component: () => import('./components/Crud.vue'),
+      props: { current: "envase-dynamic",
+        mainTableFields: Vue.prototype.$constants().envaseManagerTableFields,
+        type: 'envase'
+      }
     }
   ]
 });

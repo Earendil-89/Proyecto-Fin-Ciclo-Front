@@ -53,6 +53,7 @@ export default {
           icon: 'fas fa-user-cog',
           child: [
             { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' },
+            { href: '/manager/envase', title: 'Gestión de envases', icon: 'fas fa-flask' },
             { 
               href: '', title: 'Almacenamiento', icon: 'fas fa-warehouse',
               child: [ 
