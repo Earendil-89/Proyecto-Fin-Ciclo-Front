@@ -39,13 +39,18 @@ export const router = new Router({
     },
     {
       path: '/armario',
-      component: () => import('./components/CrudNested.vue'),
-      props: { parent: "armario-dynamic",
-        children: "estante-dynamic",
+      component: () => import('./components/Crud.vue'),
+      props: { current: "armario-dynamic",
         mainTableFields: Vue.prototype.$constants().armarioTableFields,
-        childTableFields: Vue.prototype.$constants().estanteTableFields,
         type: 'armario',
-        childType: 'estante'
+      }
+    },
+    {
+      path: '/estante',
+      component: () => import('./components/Crud.vue'),
+      props: { current: "estante-dynamic",
+        mainTableFields: Vue.prototype.$constants().estanteTableFields,
+        type: 'estante',
       }
     },
     {
@@ -65,8 +70,12 @@ export const router = new Router({
       }
     },
     {
-      path: '/admin/solicitud',
-      component: () => import('./views/SolicitudAdmin.vue')
+      path: '/solicitud',
+      component: () => import('./components/Crud.vue'),
+      props: { current: "solicitud-dynamic",
+        mainTableFields: Vue.prototype.$constants().solicitudTableFields,
+        type: 'solicitud'
+      }
     },
     {
       path: '/usuario/solicitud',
