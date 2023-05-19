@@ -104,6 +104,9 @@ export default {
     reset() {
       this.id = null;
       this.nombre = '';
+      this.apellidos = '';
+      this.password = '';
+      this.email = '';
       this.txtBtnForm = 'Guardar';
       this.editState = false;
     },
