@@ -1,15 +1,31 @@
 <template>
   <div>
     <div class="main">
-      <sidebar-menu 
+      <b-navbar
+      >
+        <b-navbar-nav class="ml-auto" v-if="currentUser">
+          <!--<b-nav-item-dropdown text="Lang" class="ml-auto mr-3">
+            <b-dropdown-item href="#">EN</b-dropdown-item>
+            <b-dropdown-item href="#">ES</b-dropdown-item>
+          </b-nav-item-dropdown>-->
+          <b-nav-item class="mr-5">
+
+          </b-nav-item>
+          <b-nav-item @click.prevent="logOut">
+            <i class="fas fa-sign-out-alt mr-1"></i>Log out
+          </b-nav-item>
+        </b-navbar-nav>
+      </b-navbar>
+      <sidebar-menu
         :menu="sideBarMenu"
         width="260px"
         :collapsed="sideBarCollapsed"
         @toggle-collapse="onToggleCollapse"
+        v-if="shouldShowSidebar"
       >
         <template v-slot:toggle-icon><i class="fas fa-ellipsis-h"></i></template>
       </sidebar-menu>
-      <b-card
+      <b-card v-if="currentUser"
         class="card-form"
         v-bind:style="[
           sideBarCollapsed == true
@@ -17,16 +33,26 @@
             : 'margin: 10px 30px 30px 285px;padding: 0px 0px 0px 0px;'
         ]"
       >
-        <router-view :key="$route.fullPath"></router-view>
+        <router-view v-if="currentUser" :key="$route.fullPath"></router-view>
       </b-card>
+    </div>
+    <div v-if="!currentUser">
+      <router-view v-if="!currentUser" :key="$route.fullPath"></router-view>
     </div>
   </div>
 </template>
 
 <script>
+import Vue from 'vue';
+import Constants from "./plugins/Constants.js";
+
+Vue.use(Constants);
+
 export default {
   data() {
     return {
+      gotoUpdate: false,
+      //---------
       userId: null,
       password: '',
       sideBarCollapsed: false,
@@ -78,16 +104,17 @@ export default {
     };
   },
   computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+    shouldShowSidebar() {
+      if( this.gotoUpdate == true ) {
+        return false;
+      }
+      return this.$store.state.auth.user;
+    }
   },
   methods: {
-    generateSideBarMenu()
-    {
-      this.sideBarMenu = [
-     
-      ];
-      this.$forceUpdate();
-     
-    },
     sidbarStateChange() {
       this.sideBarCollapsed = !this.sideBarCollapsed;
     },
@@ -117,6 +144,31 @@ export default {
         .then(value => {
           this.msgValue = value;
         });
+    },
+    logOut() {
+      this.$store.dispatch('auth/logout');
+      this.$router.push('/login');
+    },
+    updateSidebar() {
+      this.sideBarMenu = [
+        {
+          header: 'mainmenu',
+          title: 'Menú principal',
+          hiddenOnCollapse: true
+        }
+      ];
+      if( this.currentUser.roles[0]=='ROLE_USER') {
+        this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuUser);
+      }
+      if( this.currentUser.roles[0] == 'ROLE_MANAGER' ) {
+        this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuManager);
+      }
+      if( this.currentUser.roles[0] == 'ROLE_ADMIN' ) {
+        this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuAdmin);
+      }
+      aler
+      this.gotoUpdate = true;
+      this.gotoUpdate = false;
     }
   },
   mounted() {

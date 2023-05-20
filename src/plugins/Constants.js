@@ -52,6 +52,44 @@ export default {
           { key: 'descripcion', label: 'descripcion' },
           { key: 'usuarioTramite', label: 'tramitado por' }
         ],
+        sidebarMenuUser: {
+          title: 'Área de usuarios',
+          icon: 'fas fa-user',
+          child:[
+            {
+              href: '/usuario/solicitud', title: 'Mis solicitudes', icon: 'fas fa-plus-square'
+            },
+            { 
+              href: '/usuario/compuesto', title: 'Uso compuestos químicos', icon: 'fas fa-flask'
+            }
+          ]
+        },
+        sidebarMenuManager: {
+          title: 'Área de responsables',
+          icon: 'fas fa-user-cog',
+          child: [
+            { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' },
+            { href: '/manager/envase', title: 'Gestión de envases', icon: 'fas fa-flask' },
+            { 
+              href: '', title: 'Almacenamiento', icon: 'fas fa-warehouse',
+              child: [ 
+                { href: '/armario', title: 'Armarios', icon: 'fas fa-box' },
+                { href: '/estante', title: 'Estantes', icon: 'fas fa-pallet' }
+            ]
+            },
+            { href: '/frase', title: 'Frases seguridad', icon: 'fas fa-exclamation-triangle' },
+            { href: '/etiqueta', title: 'Etiquetado seguridad', icon: 'fas fa-exclamation-triangle'},
+            { href: '/compuesto', title: 'Compuestos químicos', icon :'fas fa-atom' },
+            { href: '/solicitud', title: 'Gestión solicitudes', icon: 'fas fa-cogs' },
+          ]
+        },
+        sidebarMenuAdmin: {
+          title: 'Área de administración',
+          icon: 'fas fa-user-shield',
+          child: [
+          { href: '/usuario', title: 'Gestión usuarios', icon: 'fas fa-user' }
+          ]
+        }
       };
     };
   }

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Constants from "./plugins/Constants.js";
+import Login from './views/Login.vue';
 
 Vue.use(Constants);
 Vue.use(Router);
@@ -10,8 +11,11 @@ export const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: () => import('./views/Home.vue')
+      component: Login,
+    },
+    {
+      path: '/login',
+      component: Login
     },
     {
       path: '/usuario',

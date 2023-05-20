@@ -142,6 +142,9 @@ export default {
       this.busy = true;
 
       switch (this.type) {
+        case 'usuario': 
+        break;
+        
         case 'estante':
           this.$refs.component.armarios = [];
           ClabtoolService.getData(this.type)

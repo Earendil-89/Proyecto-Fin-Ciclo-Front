@@ -5,17 +5,17 @@
         <h4 class="mt-4 mb-3">Usuario</h4>
         <b-row class="mb-1">
           <b-col>
-            <label for="Nombre" class="form-label">Nombre</label>
-            <b-form-input v-model="nombre" id="Nombre" :state="validField(nombre)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(nombre)">Debe introducir un nombre</b-form-invalid-feedback>
+            <label for="nombreUsuario" class="form-label">Nombre de usuario</label>
+            <b-form-input v-model="nombreUsuario" id="nombreUsuario" :state="validField(nombreUsuario)"></b-form-input>
+            <b-form-invalid-feedback :state="validField(apellidos)">Debe ingresar un nombre de usuario</b-form-invalid-feedback>
           </b-col>
           <b-col>
-            <label for="Apellidos" class="form-label">Apellidos</label>
-            <b-form-input v-model="apellidos" id="Apellidos" :state="validField(apellidos)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(apellidos)">Debe introducir apellidos</b-form-invalid-feedback>
+            <label for="Email" class="form-label">Email</label>
+            <b-form-input v-model="email" id="Email" :state="validField(email)"></b-form-input>
+            <b-form-invalid-feedback :state="validField(email)">Debde introducir una dirección de correo electrónico</b-form-invalid-feedback>
           </b-col>
           <b-col cols="3">
-            <label for="Password" class="form-label">Contraseña</label>
+            <label for="password" class="form-label" v-if="!editState">Contraseña</label>
             <div class="d-md-flex">
                 <b-form-input v-model="password" id="Password" :state="validField(password)"></b-form-input>
               <b-button class="ml-2" variant="outline-primary" @click="copyPassword"><i class="fas fa-clipboard-list"></i></b-button>
@@ -25,9 +25,14 @@
         </b-row>
         <b-row class="mb-3">
           <b-col>
-            <label for="Email" class="form-label">Email</label>
-            <b-form-input v-model="email" id="Email" :state="validField(email)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(email)">Debde introducir una dirección de correo electrónico</b-form-invalid-feedback>
+            <label for="Nombre" class="form-label">Nombre</label>
+            <b-form-input v-model="nombre" id="Nombre" :state="validField(nombre)"></b-form-input>
+            <b-form-invalid-feedback :state="validField(nombre)">Debe introducir un nombre</b-form-invalid-feedback>
+          </b-col>
+          <b-col>
+            <label for="Apellidos" class="form-label">Apellidos</label>
+            <b-form-input v-model="apellidos" id="Apellidos" :state="validField(apellidos)"></b-form-input>
+            <b-form-invalid-feedback :state="validField(apellidos)">Debe introducir apellidos</b-form-invalid-feedback>
           </b-col>
         </b-row>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -65,6 +70,7 @@ export default {
       apellidos: '',
       email: '',
       password: '',
+      nombreUsuario: '',
       roles: [{id:1, rol:'ROL_USUARIO' },{id:2,rol:'ROL_TECNICO'},{id:3,rol:'ROL_ADMINISTRADOR'}],
       //--------------------
       // -- Campos del componente
@@ -82,6 +88,7 @@ export default {
           apellidos: this.apellidos,
           email: this.email,
           password: this.password,
+          nombreUsuario: this.nombreUsuario,
           roles: this.roles
         };
 
@@ -93,6 +100,7 @@ export default {
           apellidos: this.apellidos,
           email: this.email,
           password: this.password,
+          nombreUsuario: this.nombreUsuario,
           roles: this.roles
         };
 
@@ -107,6 +115,7 @@ export default {
       this.apellidos = '';
       this.password = '';
       this.email = '';
+      this.nombreUsuario = '';
       this.txtBtnForm = 'Guardar';
       this.editState = false;
     },
@@ -114,9 +123,9 @@ export default {
       this.id = item.id;
       this.nombre = item.nombre;
       this.apellidos = item.apellidos;
-      this.password = item.password;
       this.email = item.email;
       this.roles = item.roles;
+      this.nombreUsuario = item.nombreUsuario;
       this.txtBtnForm = 'Actualizar';
       this.editState = true;
     },
