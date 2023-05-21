@@ -46,11 +46,20 @@ export default {
           { key: 'action', label: '', thStyle: { width: '120px' } }
         ],
         solicitudUsuarioTableFields: [
-          { key: 'fechaSolicitud', label: 'Fecha', sortable: true },
-          { key: 'estado', label: 'Estado', sortable: true },
-          { key: 'idRecipiente', label: 'recipiente' },
-          { key: 'descripcion', label: 'descripcion' },
-          { key: 'usuarioTramite', label: 'tramitado por' }
+          { key: 'fechaSolicitud', label: 'Fecha', sortable: true, thStyle: { width: '120px'} },
+          { key: 'estado', label: 'Estado', sortable: true, thStyle: { width: '150px'} },
+          { key: 'codigoRecipiente', label: 'Recipiente'},
+          { key: 'descripcion', label: 'descripcion', thStyle: { minWidth: '220px'} },
+          { key: 'usuarioTramite', label: 'tramitado por', thStyle: { minWidth: '140px' } },
+          { key: 'action', label: '', thStyle: { width: '120px'} },
+        ],
+        solicitudTableFields: [
+          { key: 'codigoRecipiente', label: 'Recipiente', thStyle: { width: '120px' } },
+          { key: 'fechaSolicitud', label: 'Fecha Sol.' },
+          { key: 'userFullName', label: 'Usuario' },
+          { key: 'link', label: 'Link' },
+          { key: 'estado', labe: 'estado', sortable: true, thStyle: { width: '150px' } },
+          { key: 'action', label: '', thStyle: { width: '120px' } }
         ],
         sidebarMenuUser: {
           title: 'Área de usuarios',

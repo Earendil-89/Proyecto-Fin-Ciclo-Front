@@ -68,11 +68,6 @@
       processForm() {
         if (this.editState == false) {
           var dataSave = {
-            fechaSolicitud: new Date(),
-            usuarioSolicitud: 1,
-            fechaTramite: null,
-            usuarioTramite: null,
-            estado: 'ESTADO_ESPERA',
             descripcion: this.descripcion,
             codigoRecipiente: this.codigoRecipiente,
             link: this.link
@@ -98,14 +93,28 @@
         this.reset();
       },
       reset() {
-        this.id = '';
-        this.Number = '';
+        this.id = null;
+        this.fechaSolicitud = null;
+        this.usuarioSolicitud = null;
+        this.fechaTramite = null;
+        this.usuarioTramite = null;
+        this.estado = null;
+        this.codigoRecipiente = '';
+        this.descripcion = '';
+        this.link = '';
         this.txtBtnForm = 'Guardar';
         this.editState = false;
       },
       loadItem(item) {
         this.id = item.id;
-        this.Number = item.Number;
+        this.fechaSolicitud = item.fechaSolicitud;
+        this.usuarioSolicitud = item.usuarioSolicitud;
+        this.fechaTramite = item.fechaTramite;
+        this.usuarioTramite = item.usuarioTramite;
+        this.estado = item.estado;
+        this.codigoRecipiente = item.codigoRecipiente;
+        this.descripcion = item.descripcion;
+        this.link = item.link;
         this.txtBtnForm = 'Actualizar';
         this.editState = true;
       },

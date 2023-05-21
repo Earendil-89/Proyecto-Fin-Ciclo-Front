@@ -1,21 +1,21 @@
 <template>
   <div>
     <b-row>
-      <b-col>
+      <b-col v-if="isValidCreateButton()">
         <b-button
           variant="primary"
           v-b-toggle:formCollapse
           class="mt-1 actionButton"
           v-show="!formStateCollapse"
         >
-          <i class="fas fa-plus-circle"></i> {{ type == 'envaseProp' ? 'Datos de envase' : 'Crear ' + type }} 
+          <i class="fas fa-plus-circle"></i> {{ getNameType }} 
         </b-button>
       </b-col>
       <b-col cols="10">
         <b-input-group class="mt-1" v-show="!formStateCollapse">
           <b-form-input
             v-model="filterSearch"
-            placeholder="Search..."
+            placeholder="Buscar..."
             class="ml-1 mr-1 shadow-sm"
             type="search"
           ></b-form-input>
@@ -66,11 +66,17 @@
         <template #cell(image)="row" align="center">
           <img :src='row.item.imgUrl' height="64">
         </template>
+        <template #cell(userFullName)="row" align="center">
+          {{ getUserFullName(row.item) }}
+        </template>
         <template #cell(image_inside)="row" align="center">
           <img :src='row.item.compuesto.imgUrl' height="64">
         </template>
         <template #cell(cantidad)="row" align="left">
           {{ row.item.cantidad + ' ' + convertUnidades(row.item.unidades) }}
+        </template>
+        <template #cell(estado)="row" align="left">
+          {{ transformEstado(row.item) }}
         </template>
         <template #cell(pureza)="row" align="center">
           {{ row.item.pureza }}%
@@ -86,6 +92,7 @@
               {{ row.detailsShowing ? '' : '' }}
             </b-button>
             <b-button
+              v-if="isValidEditButton(row.item)"
               size="sm"
               variant="outline-success"
               v-b-toggle:formCollapse
@@ -94,6 +101,17 @@
               ><i class="fas fa-edit fa-2x"></i
             ></b-button>
             <b-button
+              v-if="isValidTramitationButton()"
+              size="sm"
+              variant="outline-success"
+              v-b-toggle:formCollapse
+              @click="editComponent(row.item)"
+              class="actionButton ml-1"
+            >
+              <i class="fas fa-stamp fa-2x"></i>
+            </b-button>
+            <b-button
+              v-if="isValidDeleteButton(row.item)"
               size="sm"
               variant="outline-danger"
               @click="deleteData(row.item)"
@@ -140,6 +158,7 @@ export default {
   methods: {
     getData() {
       this.busy = true;
+      const name = this.$store.state.auth.user.username;
 
       switch (this.type) {
         case 'usuario': 
@@ -176,15 +195,24 @@ export default {
               this.$refs.component.generateListUnidades(data);
             })
             .catch(error => this.$parent.catchError(error));   
-          break;
-        /*
-        case 'solicitud':
-          ClabtoolService.getData('usuario/1/solicitud')
+        break;
+        
+        case 'solicitud-user':
+          ClabtoolService.getData('solicitud/usuario?nombreUsuario=' + name)
             .then(data => {
               this.items = data;
             })
             .catch(error => this.$parent.catchError(error)); 
-          break;       */
+        break;
+
+        case 'solicitud-manager':
+          ClabtoolService.getData('solicitud')
+            .then(data => {
+              this.items = data;
+            })
+            .catch(error => this.$parent.catchError(error));  
+        break;
+
         default:
           ClabtoolService.getData(this.type)
             .then(data => {
@@ -197,8 +225,17 @@ export default {
     },
     saveData(data) {
       this.busy = true;
+      const name = this.$store.state.auth.user.username;
 
       switch (this.type) {
+        case 'solicitud':
+          ClabtoolService.saveData('solicitud/usuario/?nombreUsuario=' + name, data)
+            .then(data => {
+              this.showMessage(data.status, data.message);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));        
+        break;
         default:
           ClabtoolService.saveData(this.type, data)
             .then(data => {
@@ -277,10 +314,57 @@ export default {
     editEstantes(item) {
       this.$refs.component.launchModal(item);
     },
+    transformEstado(item) {
+      switch (item.estado) {
+        case 'ESTADO_ESPERA': return 'Esperando trámite';
+        case 'ESTADO_ACEPTADA': return 'Aceptada';
+        case 'ESTADO_DENEGADA': return 'Denegada';
+      }
+    },
+    getUserFullName(item) {
+      return item.usuarioSolicitud.apellidos + ', ' + item.usuarioSolicitud.nombre;
+    },
+    isValidEditButton(item) {
+      if( this.current == 'solicitudUser-dynamic') {
+        if( item.estado != 'ESTADO_ESPERA' ) {
+          return false;
+        }
+      }
+      else if( this.current == 'solicitud-dynamic' ) {
+        return false;
+      }
+      return true;
+    },
+    isValidDeleteButton(item) {
+      if( this.current == 'solicitudUser-dynamic') {
+        if( item.estado != 'ESTADO_ESPERA') {
+          return false;
+        }
+      }
+      if( this.current == 'solicitud-dynamic') {
+        if( item.estado == 'ESTADO_ESPERA') {
+          return false;
+        }
+      }
+      return true;
+    },
+    isValidTramitationButton() {
+      return this.current == 'solicitud-dynamic';
+    },
+    isValidCreateButton() {
+      return this.current != 'solicitud-dynamic';
+    }
   },
   computed: {
     rows() {
       return this.items.length;
+    },
+    getNameType() {
+      switch( this.type ) {
+        case 'envaseProp': return 'Datos de envase';
+        case 'solicitud-user': return 'Crear solicitud';
+        default: return 'Crear ' + this.type;
+      }
     }
   },
   mounted() {
@@ -296,8 +380,8 @@ export default {
     "etiqueta-dynamic": () => import("./EtiquetaComponent.vue"),
     "compuesto-dynamic": () => import("./CompuestoComponent.vue"),
     "envase-dynamic": () => import("./EnvasePropComponent.vue"),
-    "solicitud-dynamic": () => import("./SolicitudComponent.vue"),
-    "solicitudUser-dynamic": () => import("./SolicitudComponent.vue"),
+    "solicitud-dynamic": () => import("./SolicitudManagerComponent.vue"),
+    "solicitudUser-dynamic": () => import("./SolicitudUserComponent.vue"),
     "armario-dynamic": () => import("./ArmarioComponent.vue"),
     "estante-dynamic": () => import("./EstanteComponent.vue"),
     VueJsonPretty

@@ -18,6 +18,10 @@ export const router = new Router({
       component: Login
     },
     {
+      path: '/home',
+      component: () => import("./views/Home.vue")
+    },
+    {
       path: '/usuario',
       component: () => import('./components/Crud.vue'),
       props: { current: 'usuario-dynamic', 
@@ -78,15 +82,15 @@ export const router = new Router({
       component: () => import('./components/Crud.vue'),
       props: { current: "solicitud-dynamic",
         mainTableFields: Vue.prototype.$constants().solicitudTableFields,
-        type: 'solicitud'
+        type: 'solicitud-manager'
       }
     },
     {
       path: '/usuario/solicitud',
       component: () => import ('./components/Crud.vue'),
-      props: { current: "solicitud-dynamic",
+      props: { current: "solicitudUser-dynamic",
         mainTableFields: Vue.prototype.$constants().solicitudUsuarioTableFields,
-        type: 'solicitud'
+        type: 'solicitud-user'
       }
     },
     {

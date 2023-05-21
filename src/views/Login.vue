@@ -6,9 +6,9 @@
         src="../images/logo_clabtool.png"
         alt="Card image cap"
       />
-      <p>Curtidos Serpiel</p>
+      <p>CLabTool</p>
       <p style="font-size: 70%; font-weight: bold;color: red;">
-        App FORMACIÓN TEST v1.0.2
+        APP TEST 0.1
       </p>
       <form name="form" @submit.prevent="handleLogin">
         <div class="form-group mt-3">
@@ -80,6 +80,7 @@ export default {
   },
   computed: {
     loggedIn() {
+      this.$parent.updateSidebar();
       return this.$store.state.auth.status.loggedIn;
     }
   },
@@ -114,7 +115,6 @@ export default {
           );
         }
       });
-      this.$parent.updateSidebar();
     }
   }
 };

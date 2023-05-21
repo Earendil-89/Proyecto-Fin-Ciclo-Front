@@ -56,51 +56,7 @@ export default {
       userId: null,
       password: '',
       sideBarCollapsed: false,
-      sideBarMenu: [ 
-        {
-          header: 'mainmenu',
-          title: 'Menú principal',
-          hiddenOnCollapse: true
-        },
-        {
-          title: 'Área de usuarios',
-          icon: 'fas fa-user',
-          child:[
-            {
-              href: '/usuario/solicitud', title: 'Mis solicitudes', icon: 'fas fa-plus-square'
-            },
-            { 
-              href: '/usuario/compuesto', title: 'Uso compuestos químicos', icon: 'fas fa-flask'
-            }
-          ]
-        },
-        {
-          title: 'Área de responsables',
-          icon: 'fas fa-user-cog',
-          child: [
-            { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' },
-            { href: '/manager/envase', title: 'Gestión de envases', icon: 'fas fa-flask' },
-            { 
-              href: '', title: 'Almacenamiento', icon: 'fas fa-warehouse',
-              child: [ 
-                { href: '/armario', title: 'Armarios', icon: 'fas fa-box' },
-                { href: '/estante', title: 'Estantes', icon: 'fas fa-pallet' }
-            ]
-            },
-            { href: '/frase', title: 'Frases seguridad', icon: 'fas fa-exclamation-triangle' },
-            { href: '/etiqueta', title: 'Etiquetado seguridad', icon: 'fas fa-exclamation-triangle'},
-            { href: '/compuesto', title: 'Compuestos químicos', icon :'fas fa-atom' },
-            { href: '/solicitud', title: 'Gestión solicitudes', icon: 'fas fa-cogs' },
-          ]
-        },
-        {
-          title: 'Área de administración',
-          icon: 'fas fa-user-shield',
-          child: [
-          { href: '/usuario', title: 'Gestión usuarios', icon: 'fas fa-user' }
-          ]
-        }
-      ]
+      sideBarMenu: []
     };
   },
   computed: {
@@ -157,22 +113,25 @@ export default {
           hiddenOnCollapse: true
         }
       ];
-      if( this.currentUser.roles[0]=='ROLE_USER') {
+      if( this.currentUser === null ) {
+        return;
+      }
+      if( this.currentUser.roles.includes('ROLE_USER')) {
         this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuUser);
       }
-      if( this.currentUser.roles[0] == 'ROLE_MANAGER' ) {
+      if( this.currentUser.roles.includes('ROLE_INSPECTOR') ) {
         this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuManager);
       }
-      if( this.currentUser.roles[0] == 'ROLE_ADMIN' ) {
+      if( this.currentUser.roles.includes('ROLE_ADMIN') ) {
         this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuAdmin);
       }
-      aler
       this.gotoUpdate = true;
       this.gotoUpdate = false;
+      console.log("Called udpate");
     }
   },
   mounted() {
-
+    this.updateSidebar();
   }
 };
 </script>
