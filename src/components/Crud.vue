@@ -66,14 +66,27 @@
         <template #cell(image)="row" align="center">
           <img :src='row.item.imgUrl' height="64">
         </template>
+        <template #cell(containerCapacity)="row" align="center">
+          {{ row.item.propiedades.capacidad + ' ' + convertUnidades(row.item.propiedades.unidades) }}
+        </template>
+        <template #cell(containerAmount)="row" align="center">
+          <p class="text-center mr-3">{{ row.item.cantidad + ' ' + convertUnidades(row.item.propiedades.unidades) }}</p>
+          <b-progress
+          class="mr-3"
+            :value="row.item.cantidad"
+            :max="row.item.propiedades.capacidad"
+            :variant="getPBarVariant(row.item.cantidad, row.item.propiedades.capacidad)"
+          >
+          </b-progress>
+        </template>
         <template #cell(userFullName)="row" align="center">
           {{ getUserFullName(row.item) }}
         </template>
         <template #cell(image_inside)="row" align="center">
           <img :src='row.item.compuesto.imgUrl' height="64">
         </template>
-        <template #cell(cantidad)="row" align="left">
-          {{ row.item.cantidad + ' ' + convertUnidades(row.item.unidades) }}
+        <template #cell(capacidad)="row" align="left">
+          {{ row.item.capacidad + ' ' + convertUnidades(row.item.unidades) }}
         </template>
         <template #cell(estado)="row" align="left">
           {{ transformEstado(row.item) }}
@@ -161,8 +174,6 @@ export default {
       const name = this.$store.state.auth.user.username;
 
       switch (this.type) {
-        case 'usuario': 
-        break;
         
         case 'estante':
           this.$refs.component.armarios = [];
@@ -213,6 +224,20 @@ export default {
             .catch(error => this.$parent.catchError(error));  
         break;
 
+        case 'envase-manager':
+          ClabtoolService.getData('manager/envase')
+            .then(data => {
+              this.items = data;
+            })
+            .catch(error => this.$parent.catchError(error));  
+
+          ClabtoolService.getData('armario')
+            .then(data => {
+              this.$refs.component.setArmarios(data);
+            })
+            .catch(error => this.$parent.catchError(error));
+        break;
+
         default:
           ClabtoolService.getData(this.type)
             .then(data => {
@@ -228,14 +253,24 @@ export default {
       const name = this.$store.state.auth.user.username;
 
       switch (this.type) {
-        case 'solicitud':
-          ClabtoolService.saveData('solicitud/usuario/?nombreUsuario=' + name, data)
+        case 'solicitud-user':
+          ClabtoolService.saveData('solicitud/usuario?nombreUsuario=' + name, data)
             .then(data => {
               this.showMessage(data.status, data.message);
               this.getData();
             })
             .catch(error => this.$parent.catchError(error));        
         break;
+
+        case 'envase-manager':
+          ClabtoolService.saveData('envase', data)
+            .then(data => {
+              this.showMessage(data.status, data.message);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));     
+        break;
+
         default:
           ClabtoolService.saveData(this.type, data)
             .then(data => {
@@ -249,8 +284,27 @@ export default {
     },
     updateData(data) {
       this.busy = true;
+      const name = this.$store.state.auth.user.username;
 
       switch (this.type) {
+        case 'solicitud-manager':
+          ClabtoolService.updateData('solicitud/usuario?nombreUsuario=' + name, data)
+            .then(data => {
+              this.showMessage(data.status, data.message);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));
+        break;
+
+        case 'envase-manager':
+          ClabtoolService.saveData('envase', data)
+            .then(data => {
+              this.showMessage(data.status, data.message);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));     
+        break;
+
         default:
           ClabtoolService.updateData(this.type, data)
             .then(data => {
@@ -278,6 +332,24 @@ export default {
           this.deleteConfirm = value;
           if (this.deleteConfirm == true) {
             switch (this.type) {
+              case 'envase-manager':
+              ClabtoolService.deleteData('envase', data.id)
+                  .then(data => {
+                    this.showMessage(data.status, data.message);
+                    this.getData();
+                  })
+                  .catch(error => this.$parent.catchError(error));
+              break;
+
+              case 'solicitud-user':
+                ClabtoolService.deleteData('solicitud', data.id)
+                  .then(data => {
+                    this.showMessage(data.status, data.message);
+                    this.getData();
+                  })
+                  .catch(error => this.$parent.catchError(error));
+              break;
+
               default:
                 ClabtoolService.deleteData(this.type, data.id)
                   .then(data => {
@@ -301,12 +373,12 @@ export default {
       this.$parent.catchError(error);
     },
     convertUnidades(unidades) {
-      switch( unidades ) {
+      switch( unidades.unidad ) {
         case 'UNIDAD_MICROLITROS': return 'ul';
         case 'UNIDAD_MILILITROS': return 'ml';
         case 'UNIDAD_LITROS': return 'l';
         case 'UNIDAD_MILIGRAMOS': return 'mg';
-        case 'UNIDAD_GRAMOS': return 'k';
+        case 'UNIDAD_GRAMOS': return 'g';
         case 'UNIDAD_KILOGRAMOS': return 'kg';
         default: return '';
       }
@@ -322,7 +394,12 @@ export default {
       }
     },
     getUserFullName(item) {
-      return item.usuarioSolicitud.apellidos + ', ' + item.usuarioSolicitud.nombre;
+      if( this.type == 'solicitud-user') {
+        return item.usuarioSolicitud.apellidos + ', ' + item.usuarioSolicitud.nombre;
+      }
+      else {
+        return item.usuarioTramite.apellidos + ', ' + item.usuarioTramite.nombre;
+      }
     },
     isValidEditButton(item) {
       if( this.current == 'solicitudUser-dynamic') {
@@ -353,6 +430,18 @@ export default {
     },
     isValidCreateButton() {
       return this.current != 'solicitud-dynamic';
+    },
+    getPBarVariant(cantidad, capacidad) {
+      if( cantidad == capacidad ) {
+        return null;
+      }
+      if( cantidad > capacidad / 2 ) {
+        return 'success';
+      }
+      if( cantidad > capacidad / 4 ) {
+        return 'warning';
+      }
+      return 'danger';
     }
   },
   computed: {
@@ -363,9 +452,10 @@ export default {
       switch( this.type ) {
         case 'envaseProp': return 'Datos de envase';
         case 'solicitud-user': return 'Crear solicitud';
+        case 'envase-manager': return 'Crear envase';
         default: return 'Crear ' + this.type;
       }
-    }
+    },
   },
   mounted() {
     this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
@@ -380,6 +470,7 @@ export default {
     "etiqueta-dynamic": () => import("./EtiquetaComponent.vue"),
     "compuesto-dynamic": () => import("./CompuestoComponent.vue"),
     "envase-dynamic": () => import("./EnvasePropComponent.vue"),
+    "envase-manager-dynamic": () => import("./EnvaseComponent.vue"),
     "solicitud-dynamic": () => import("./SolicitudManagerComponent.vue"),
     "solicitudUser-dynamic": () => import("./SolicitudUserComponent.vue"),
     "armario-dynamic": () => import("./ArmarioComponent.vue"),
