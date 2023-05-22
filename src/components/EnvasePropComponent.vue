@@ -176,6 +176,7 @@
       <SeguridadModal
         type="frase"
         :tableFields="fraseTableFields"
+        :showOnly="false"
         v-model="frases"
       ></SeguridadModal>
     </b-modal>
@@ -187,6 +188,7 @@
       <SeguridadModal
         type="etiqueta"
         :tableFields="etiquetaTableFields"
+        :showOnly="false"
         v-model="etiquetas"
       ></SeguridadModal>
     </b-modal>

@@ -62,7 +62,8 @@ export default {
   props: {
     type: String,
     tableFields: Array,
-    selectedItems: Array
+    selectedItems: Array,
+    showOnly: Boolean
   },
   data() {
     return {
@@ -89,6 +90,9 @@ export default {
       this.busy = false;
     },
     onRowClicked(item) {
+      if( this.showOnly ) {
+        return;
+      }
       let found = false;
       for( let i = 0; i < this.selectedItems.length; i++ ) {
         if( this.selectedItems[i].id == item.id ) {
@@ -103,6 +107,10 @@ export default {
     }
   },
   mounted() {
+    if( this.showOnly ) {
+      this.tableItems = this.selectedItems;
+      return;
+    }
     this.getData();
   },
   computed: {
@@ -110,6 +118,9 @@ export default {
       return this.tableItems.length;
     },
     cptItems() {
+      if( this.showOnly ) {
+        return this.tableItems;
+      }
       return this.tableItems.map((item) => {
         let tmp = item;
         let found = false;
@@ -120,7 +131,7 @@ export default {
             break;
           }
         }
-        if( found == false) {
+        if( found == false ) {
           tmp._rowVariant = null;
         }
         return tmp;
