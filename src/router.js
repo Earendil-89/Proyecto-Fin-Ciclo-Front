@@ -73,7 +73,7 @@ export const router = new Router({
       path: '/envaseProp',
       component: () => import('./components/Crud.vue'),
       props: { current: "envase-dynamic",
-        mainTableFields: Vue.prototype.$constants().envaseTableFields,
+        mainTableFields: Vue.prototype.$constants().envasePropTableFields,
         type: 'envaseProp'
       }
     },
@@ -96,9 +96,9 @@ export const router = new Router({
     {
       path: '/manager/envase',
       component: () => import('./components/Crud.vue'),
-      props: { current: "envase-dynamic",
-        mainTableFields: Vue.prototype.$constants().envaseManagerTableFields,
-        type: 'envase'
+      props: { current: "envase-manager-dynamic",
+        mainTableFields: Vue.prototype.$constants().envaseTableFields,
+        type: 'envase-manager'
       }
     }
   ]
