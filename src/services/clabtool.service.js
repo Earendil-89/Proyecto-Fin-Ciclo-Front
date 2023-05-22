@@ -15,7 +15,7 @@ class ClabtoolService {
       }).then(response => response.data)
   }
 
-  saveData(type,formData) {
+  saveData(type, formData) {
     let user = JSON.parse(localStorage.getItem('user'));
     return axios
       .post(

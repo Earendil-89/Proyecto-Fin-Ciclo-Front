@@ -37,20 +37,29 @@ export default {
           { key: 'image', label: 'Imagen', thStyle: { width: '100px'} },
           { key: 'action', label: '', thStyle: { width: '120px'} }
         ],
-        envaseTableFields: [
+        envasePropTableFields: [
           { key: 'codigo', label: 'Código envase', thStyle: { width: '140px'} },
           { key: 'nombre', label: 'Nombre', sortable: true },
           { key: 'pureza', label: 'Pureza', thStyle: { width: '140px'} },
-          { key: 'cantidad', label: 'Cantidad', thStyle: { width: '140px'} },
+          { key: 'capacidad', label: 'Capacidad', thStyle: { width: '140px'} },
           { key: 'image_inside', label: '', thStyle: { width: '100px' } },
           { key: 'action', label: '', thStyle: { width: '120px' } }
+        ],
+        envaseTableFields: [
+          { key: 'propiedades.codigo', label: 'Código' },
+          { key: 'propiedades.nombre', label: 'Nombre' },
+          { key: 'containerAmount', label: 'Cantidad', thStyle: { width: '180px' } },
+          { key: 'containerCapacity', label: 'Capacidad' },
+          { key: 'propiedades.pureza', label: 'Pureza' },
+          { key: 'image_envaseProp', label: 'Imagen' },
+          { key: 'action', label: '' , thStyle:{ width: '120px' } }
         ],
         solicitudUsuarioTableFields: [
           { key: 'fechaSolicitud', label: 'Fecha', sortable: true, thStyle: { width: '120px'} },
           { key: 'estado', label: 'Estado', sortable: true, thStyle: { width: '150px'} },
           { key: 'codigoRecipiente', label: 'Recipiente'},
           { key: 'descripcion', label: 'descripcion', thStyle: { minWidth: '220px'} },
-          { key: 'usuarioTramite', label: 'tramitado por', thStyle: { minWidth: '140px' } },
+          { key: 'userFullName', label: 'Tramitado por', thStyle: { minWidth: '140px' } },
           { key: 'action', label: '', thStyle: { width: '120px'} },
         ],
         solicitudTableFields: [
