@@ -2,73 +2,94 @@
     <div>
       <b-collapse id="formCollapse">
         <b-form @submit.prevent="processForm">
-          <h4 class="mt-4 mb-3">Datos envase</h4>
+          <h4 class="mt-4 mb-3">Envase</h4>
           <b-row class="mb-1">
-            <b-col cols="2">
-              <label for="codigo" class="form-label">Código</label>
-              <b-form-input v-model="codigo" id="codigo" :state="validField(codigo)"></b-form-input>
-              <b-form-invalid-feedback :state="validField(codigo)">Debe introducir un código</b-form-invalid-feedback>
-            </b-col>
-            <b-col>
-              <label for="nombre" class="form-label">Nombre</label>
-              <b-form-input v-model="nombre" id="nombre" :state="validField(nombre)"></b-form-input>
-              <b-form-invalid-feedback :state="validField(nombre)">Debe indicar el nombre del envase </b-form-invalid-feedback>
-            </b-col>
-            <b-col cols="2">
-              <label for="pureza" class="form-label">Pureza (%)</label>
-                <b-form-input v-model="pureza" id="pureza"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="mb-3">
-            <b-col cols="2">
-              <label for="capacidad" class="form-label">Capacidad</label>
-              <b-form-input v-model="capacidad" id="Email" type="number" min="0.0" :state="validField(capacidad)"></b-form-input>
-              <b-form-invalid-feedback :state="validField(capacidad)">Debde introducir la capacidad de producto</b-form-invalid-feedback>
-            </b-col>
-            <b-col cols="2">
-              <label for="unidades" class="form-label">Unidades</label>
-              <b-form-select v-model="unidades" :options="listUnidades" id="unidades" :state="unidades != null"></b-form-select>
-              <b-form-invalid-feedback :state="unidades != null">Debde especificar las unidades</b-form-invalid-feedback>
-            </b-col>
-            <b-col>
-              <label for="compuesto-nombre" class="form-label">Compuesto químico</label>
+            <b-col cols="3" class="mr-5">
+              <label for="compuesto-nombre" class="form-label">Código envase</label>
               <b-row>
                 <b-col>
-                  <b-alert show :variant="alertVariant" class="py-2"> {{ compuesto.cas + ' ---- ' + compuesto.nombre }}</b-alert>
-                  <b-form-invalid-feedback :state="compuesto != null">Debde especificar el compuesto químico</b-form-invalid-feedback>
+                  <b-alert show :variant="alertVariant" class="py-2"> {{ showCodigo }}</b-alert>
                 </b-col>
                 <b-col cols="1">
                   <b-button
                     variant="primary"
-                    v-if="!selectCompuestoState"
-                    @click="showSelectionCompuesto"
+                    v-if="!selectPropState"
+                    @click="showEnvaseProps"
                   >
                     <i class="fas fa-search"></i>
                   </b-button>
                 </b-col>
-                <b-col cols="2"></b-col>
               </b-row>
-            </b-col>         
+            </b-col>  
+            <b-col>
+              <label for="nombre" class="form-label">Cantidad</label>
+              <b-form-input v-model="cantidad" id="cantidad" :state="validNumber(cantidad)" type="number" min="0.0" step="any" :max="getMax"></b-form-input>
+              <b-form-invalid-feedback :state="validNumber(cantidad)">Debe indicar un valor válido </b-form-invalid-feedback>
+            </b-col>
+            <b-col>
+              <label for="armario" class="form-label">Armario</label>
+              <b-form-select
+              id="armario"
+              v-model="armario"
+              :options="listArmarios"
+              @input="findEstantes"
+              ></b-form-select>
+            </b-col>
+            <b-col>
+              <label for="estante" class="form-label">Estante</label>
+              <b-form-select
+              id="estante"
+              v-model="estante"
+              :options="listEstantes"
+              :state="validObj(estante)"
+              ></b-form-select>
+              <b-form-invalid-feedback :state="validObj(estante)">Debe especificar un almacenamiento</b-form-invalid-feedback>
+            </b-col>
           </b-row>
-          <b-row>
-            <b-col cols="3">
-              <b-button
-                variant="outline-primary"
-                class="actionButton"
-                @click="modalEtiquetas"
-              >
-              <i class="fas fa-exclamation-circle"></i> Etiquetado de seguridad
-              </b-button>
+          <b-row class="mb-3">
+            <b-col>
+              <label class="form-label">Capacidad</label>
+              <b-form-input v-model="showCapacidad" id="show-data" :disabled="true"></b-form-input>
             </b-col>
-            <b-col cols="3">
-              <b-button
-                variant="outline-primary"
-                class="actionButton"
-                @click="modalFrases"
-              >
-              <i class="fas fa-exclamation-circle"></i> Frases de seguridad
-              </b-button>
+            <b-col>
+              <label class="form-label">Unidades</label>
+              <b-form-input v-model="showUnidades" :options="listUnidades" id="show-data" :disabled="true"></b-form-input>
             </b-col>
+            <b-col>
+              <label class="form-label">Pureza (%)</label>
+                <b-form-input v-model="showPureza" id="show-data" :disabled="true"></b-form-input>
+            </b-col>
+            <b-col>
+              <label class="form-label">Cas compuesto</label>
+                <b-form-input v-model="showCas" id="show-data" :disabled="true"></b-form-input>
+            </b-col>   
+            <b-col>
+              <label class="form-label">Nombre compuesto</label>
+                <b-form-input v-model="showNombre" id="show-data" :disabled="true"></b-form-input>
+            </b-col>   
+            <b-col cols="3">
+              <label>Seguridad</label>
+              <b-row>
+                <b-col>
+                  <b-button
+                    variant="outline-success"
+                    class="actionButton"
+                    @click="modalEtiquetas"
+                  >
+                  <i class="fas fa-search"></i> Ver etiquetas
+                  </b-button>
+                  </b-col>
+                  <b-col>
+                    <b-button
+                      variant="outline-success"
+                      class="actionButton"
+                      @click="modalFrases"
+                    >
+                    <i class="fas fa-search"></i> Ver frases
+                    </b-button>
+                  </b-col>
+                </b-row>   
+              </b-col>  
           </b-row>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <b-button
@@ -83,14 +104,14 @@
               type="submit"
               class="actionButton"
               v-b-toggle:formCollapse
-              :disabled="!validField(codigo) || !validField(nombre) || !validField(capacidad) || !validField(unidades) || alertVariant === 'danger'"
+              :disabled="!validObj(estante) || !validNumber(cantidad) || !validObj(propiedades)"
               ><i class="far fa-check-circle mr-1"></i
               >{{ txtBtnForm }}</b-button
             >
           </div>
         </b-form>
       </b-collapse>
-      <b-card style="background-color: beige;" class="mt-3" v-if="selectCompuestoState">
+      <b-card style="background-color: beige;" class="mt-3" v-if="selectPropState">
        <h5>Elija compuesto químico</h5>
        <div>
           <b-input-group class="mt-1">
@@ -123,8 +144,8 @@
           :busy="busy"
           :filter="filterSearchCompuesto"
           :total-rows="rows"
-          :fields="compuestoTableFields"
-          :items="compuestoItems"
+          :fields="envasePropTableFields"
+          :items="envasePropItems"
           :per-page="perPage"
           :current-page="currentPage"
           hover
@@ -151,7 +172,7 @@
               <b-button
                 size="lg"
                 variant="outline-info"
-                @click="sendCompuesto(row.item)"
+                @click="sendProp(row.item)"
                 class="actionButton ml-1"
                 ><i class="fas fa-check"></i>
               </b-button>
@@ -176,7 +197,8 @@
         <SeguridadModal
           type="frase"
           :tableFields="fraseTableFields"
-          v-model="frases"
+          :showOnly="true"
+          v-model="getFrases"
         ></SeguridadModal>
       </b-modal>
       <b-modal
@@ -187,16 +209,17 @@
         <SeguridadModal
           type="etiqueta"
           :tableFields="etiquetaTableFields"
-          v-model="etiquetas"
+          :showOnly="true"
+          v-model="getEtiquetas"
         ></SeguridadModal>
       </b-modal>
     </div>
   </template>
   
   <script>
-  import axios from 'axios';
   import VueJsonPretty from 'vue-json-pretty';
   import SeguridadModal from './SeguridadModal.vue';
+  import ClabtoolService from '../services/clabtool.service';
   
   export default {
     name: 'EnvaseProp',
@@ -204,17 +227,12 @@
       return {
         // -- 
         id: null,
-        codigo: '',
-        nombre: '',
-        pureza: '',
-        capacidad: '',
-        unidades: null,
-        compuesto: {
-          cas: '',
-          nombre: 'Debe elegir un compuesto químico'
-        },
-        frases: [],
-        etiquetas: [],
+        cantidad: '',
+        disponible: false,
+        armario: null,
+        estante: null,
+        propiedades: null,
+        pedido: null,
         // -- Campos del componente
         perPage: 10,
         currentPage: 1,
@@ -232,10 +250,12 @@
         ],
         // -- Seccion de la seleccion del compuesto quimico
         filterSearchCompuesto: '',
-        compuestoTableFields: [
-          { key: 'cas', label: 'Número CAS', sortable: true, thStyle: { width: '120px' } },
-          { key: 'nombre', label: 'Nombre', sortable: true},
-          { key: 'image', label: 'Imagen', thStyle: { width: '96px' } },
+        envasePropTableFields: [
+          { key: 'codigo', label: 'Código', thStyle: { width: '120px' } },
+          { key: 'nombre', label: 'Nombre envase', sortable: true},
+          { key: 'compuesto.cas', label: 'Número CAS', sortable: true, thStyle: { width: '120px' } },
+          { key: 'compuesto.nombre', label: 'Nombre compuesto', sortable: true},
+          { key: 'image_inside', label: 'Imagen compuesto', thStyle: { width: '96px' } },
           { key: 'action', label: '', thStyle: { width: '80px' } }
         ],
         fraseTableFields: [
@@ -247,8 +267,10 @@
           { key: 'descripcion', label: 'Descripción', sortable: true },
           { key: 'image', label: 'Imagen', thStyle: { width: '100px'} },      
         ],
-        selectCompuestoState: false,
-        compuestoItems: [],
+        selectPropState: false,
+        envasePropItems: [],
+        listArmarios: [],
+        listEstantes: [],
         perPageCompuesto: 5,
         currentPageCompuesto: 1,
         busy: false
@@ -258,28 +280,22 @@
       processForm() {
         if (this.editState == false) {
           var dataSave = {
-            codigo: this.codigo,
-            nombre: this.nombre,
-            pureza: this.pureza,
-            capacidad: this.capacidad,
-            unidades: this.unidades,
-            compuesto: this.compuesto,
-            frases: this.frases,
-            etiquetas: this.etiquetas
+            cantidad: this.cantidad,
+            disponible: this.disponible,
+            estante: this.estante,
+            propiedades: this.propiedades,
+            pedido: this.pedido
           };
   
           this.$parent.saveData(dataSave);
         } else {
           var dataUpdate = {
             id: this.id,
-            codigo: this.codigo,
-            nombre: this.nombre,
-            pureza: this.pureza,
-            capacidad: this.capacidad,
-            unidades: this.unidades,
-            compuesto: this.compuesto,
-            frases: this.frases,
-            etiquetas: this.etiquetas
+            cantidad: this.cantidad,
+            disponible: this.disponible,
+            estante: this.estante,
+            propiedades: this.propiedades,
+            pedido: this.pedido
           };
   
           this.$parent.updateData(dataUpdate);
@@ -289,72 +305,132 @@
       },
       reset() {
         this.id = null;
-        this.codigo = '';
-        this.nombre = '';
-        this.pureza = '';
-        this.capacidad = '';
-        this.unidades = null;
-        this.compuesto = { cas: '', nombre: 'Debe elegir un compuesto químico' };
-        this.selectCompuestoState = false;
-        this.frases = [];
-        this.etiquetas = [];
+        this.cantidad = '',
+        this.disponible = true,
+        this.estante = null;
+        this.armario = null;
+        this.propiedades = null;
+        this.pedido = null;
+        this.selectPropState = false;
   
         this.txtBtnForm = 'Guardar';
         this.editState = false;
       },
       loadItem(item) {
         this.id = item.id;
-        this.codigo = item.codigo;
-        this.nombre = item.nombre;
-        this.pureza = item.pureza;
-        this.capacidad = item.capacidad;
-        this.unidades = item.unidades;
-        this.compuesto = item.compuesto;
+        this.cantidad = item.cantidad,
+        this.disponible = item.disponible,
+        this.propiedades = item.propiedades;
+        this.armario = item.estante.armario,
+        this.estante = item.estante,
         this.frases = item.frases;
-        this.etiquetas = item.etiquetas;
-        this.selectCompuestoState = false;
+        this.selectPropState = false;
   
         this.txtBtnForm = 'Actualizar';
         this.editState = true;
       },
-      validField(field) {
-        if( field === null )
+      validNumber(field) {
+        if( field.length == 0 ) {
           return false;
-  
-        if( typeof field == 'number' )
-          return true;
-  
-        return field.length > 0;
+        }
+        if( this.propiedades == null ) {
+          return false;
+        }
+        const num = Number.parseFloat(field);
+        return num >= 0.0 && num <= this.propiedades.capacidad;
       },
-      showSelectionCompuesto() {
-        this.selectCompuestoState = true;
-        this.getCompuestos();
+      validObj(field) {
+        if( field == null ) {
+          return false;
+        }
+        return field.id != null;
       },
-      getCompuestos() {
-      return axios
-        .get('http://localhost:9099/api/clabtool/' + 'compuesto', {
-        }).then(response => {
-          this.compuestoItems = response.data;
-        }).catch(error => this.$parent.catchError(error));
+      showEnvaseProps() {
+        this.selectPropState = true;
+        this.getEnvaseProps();
       },
-      sendCompuesto(compuesto) {
-        this.compuesto = compuesto;
-        this.compuestoItems = [];
-        this.selectCompuestoState = false;
+      getEnvaseProps() {
+        ClabtoolService.getData('envaseProp')
+          .then(data => {
+            this.envasePropItems = data;
+          })
+          .catch(error => this.$parent.catchError(error)); 
+      },
+      sendProp(prop) {
+        this.propiedades = prop;
+        this.cantidad = prop.capacidad;
+        this.envasePropItems = [];
+        this.selectPropState = false;
       },
       modalFrases(button) {
         this.$root.$emit('bv::show::modal', 'modal-frases', button);
       },
       modalEtiquetas(button) {
         this.$root.$emit('bv::show::modal', 'modal-etiquetas', button);     
+      },
+      setArmarios(data) {
+        this.listArmarios = [ { value: null, text: 'Elija un armario' } ]
+        for( let i = 0; i < data.length; i++ ) {
+          this.listArmarios.push({
+            value: data[i],
+            text: data[i].nombre
+          });
+        }
+      },
+      findEstantes() {
+        this.listEstantes = [{ value: null, text: 'Elija un estante' } ];
+        const bufferEstante = this.estante;
+        this.estante = null;
+        if( this.armario == null ) {
+          return;
+        }
+        ClabtoolService.getData('estante?armarioId=' + this.armario.id)
+          .then(data => {
+            for( let i = 0; i < data.length; i++ ) {
+              this.listEstantes.push({
+                value: data[i],
+                text: data[i].nombre
+              });
+            }
+          })
+        if( bufferEstante.armario.id == this.armario.id ) {
+          this.estante = bufferEstante;
+        }
       }
     },
     computed: {
       rows() {
-        return this.compuestoItems.length;
+        return this.envasePropItems.length;
       },
       alertVariant() {
-        return this.compuesto.id == null ? 'danger' : 'success';
+        return this.propiedades == null ? 'danger' : 'success';
+      },
+      getMax() {
+        return this.propiedades == null ? 0.0 : this.propiedades.capacidad;
+      },
+      showCodigo() {
+        return this.propiedades == null ? 'Elija un código' : this.propiedades.codigo;
+      },
+      showNombre() {
+        return this.propiedades == null ? '' : this.propiedades.compuesto.nombre;
+      },
+      showCas() {
+        return this.propiedades == null ? '' : this.propiedades.compuesto.cas;
+      },
+      showPureza() {
+        return this.propiedades == null ? '' : this.propiedades.pureza;
+      },
+      showCapacidad() {
+        return this.propiedades == null ? '' : this.propiedades.capacidad;
+      },
+      showUnidades() {
+        return this.propiedades == null ? '' : this.propiedades.unidades.nombre;
+      },
+      getFrases() {
+        return this.propiedades == null ? [] : this.propiedades.frases;
+      },
+      getEtiquetas() {
+        return this.propiedades == null ? [] : this.propiedades.etiquetas;
       }
     },
     mounted() {
