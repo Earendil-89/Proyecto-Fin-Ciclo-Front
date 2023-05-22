@@ -71,7 +71,7 @@ export default {
       email: '',
       password: '',
       nombreUsuario: '',
-      roles: [{id:1, rol:'ROL_USUARIO' },{id:2,rol:'ROL_TECNICO'},{id:3,rol:'ROL_ADMINISTRADOR'}],
+      roles: [{id:1, name:'ROLE_USER' },{id:2,name:'ROLE_INSPECTOR'},{id:3,name:'ROLE_ADMIN'}],
       //--------------------
       // -- Campos del componente
       perPage: 10,

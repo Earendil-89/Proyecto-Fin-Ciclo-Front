@@ -14,7 +14,11 @@
           </b-col>
           <b-col>
             <label for="link" class="form-label">Fecha de la solicitud</label>
-            <b-form-datepicker v-model="fechaSolicitud" id="show-data" disabled="true"></b-form-datepicker>
+            <b-form-input v-model="fechaSolicitudForm" id="show-data" disabled="true"></b-form-input>
+          </b-col>
+          <b-col>
+            <label for="link" class="form-label">Estado de la solicitud</label>
+            <b-form-select v-model="estado" :options="listEstados" id="formEstado"></b-form-select>
           </b-col>
         </b-row>
         <b-row class="mb-3">
@@ -64,31 +68,24 @@
         currentPage: 1,
         txtBtnForm: 'Guardar',
         editState: false,
+        //--------------------
+        listEstados: [
+          { value: 'ESTADO_ESPERA', text: 'Esperando trámite' },
+          { value: 'ESTADO_ACEPTADA', text: 'Aceptada' },
+          { value: 'ESTADO_DENEGADA', text: 'Denegada' }
+        ]
       };
     },
     methods: {
       processForm() {
         if (this.editState == false) {
-          var dataSave = {
-            descripcion: this.descripcion,
-            codigoRecipiente: this.codigoRecipiente,
-            link: this.link
-          };
-  
-          this.$parent.saveData(dataSave);
+          this.reset();
+          return;
         } else {
           var dataUpdate = {
             id: this.id,
-            fechaSolicitud: this.fechaSolicitud,
-            usuarioSolicitud: this.usuarioSolicitud,
-            fechaTramite: null,
-            usuarioTramite: null,
-            estado: 'ESTADO_ESPERA',
-            descripcion: this.descripcion,
-            codigoRecipiente: this.codigoRecipiente,
-            link: this.link
+            estado: this.estado,
           };
-  
           this.$parent.updateData(dataUpdate);
         }
   
@@ -127,6 +124,11 @@
     computed: {
       fullUserName() {
         return this.usuarioSolicitud.apellidos + ', ' + this.usuarioSolicitud.nombre;
+      },
+      fechaSolicitudForm() {
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}
+        const date = new Date(this.fechaSolicitud);
+        return date.toLocaleDateString('es-ES', options);
       }
     },
     mounted() {
