@@ -3,11 +3,7 @@
     <div class="main">
       <b-navbar
       >
-        <b-navbar-nav class="ml-auto" v-if="currentUser">
-          <!--<b-nav-item-dropdown text="Lang" class="ml-auto mr-3">
-            <b-dropdown-item href="#">EN</b-dropdown-item>
-            <b-dropdown-item href="#">ES</b-dropdown-item>
-          </b-nav-item-dropdown>-->
+        <b-navbar-nav class="ml-auto" id="navbar" v-if="currentUser">
           <b-nav-item class="mr-5">
 
           </b-nav-item>
@@ -79,6 +75,16 @@ export default {
     },
     catchError(error) {
         console.log(error);
+        if( error.response != null && error.response.status == 401 ) {
+          this.showMsgBoxConfirm(
+            'Sesión inválida o expirada. Por favor, realize login',
+            'danger',
+            'Error',
+            'sm'
+          );
+          this.logOut();
+          return;
+        }
         this.showMsgBoxConfirm(
           'A problem occurred. Please contact the administrator',
           'danger',
@@ -148,6 +154,10 @@ export default {
 body
 {
   background-image: linear-gradient(#e8e8ea, #ebe9e9);
+}
+.navbar {
+  background: linear-gradient(to right, #2a2a2e 50%, #c3c3c5 90% );
+  
 }
 .card-login {
   max-width: 350px;
