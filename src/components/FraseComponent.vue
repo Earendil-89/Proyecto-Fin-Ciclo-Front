@@ -41,6 +41,7 @@
     name: 'Frase',
     data() {
       return {
+        id: null,
         codigo: '',
         descripcion: '',
         //--------------------
@@ -71,14 +72,16 @@
         this.reset();
       },
       reset() {
-        this.id = '';
-        this.Number = '';
+        this.id = null;
+        this.codigo = '',
+        this.descripcion = '';
         this.txtBtnForm = 'Guardar';
         this.editState = false;
       },
       loadItem(item) {
         this.id = item.id;
-        this.Number = item.Number;
+        this.codigo = item.codigo;
+        this.descripcion = item.descripcion;
         this.txtBtnForm = 'Actualizar';
         this.editState = true;
       },
