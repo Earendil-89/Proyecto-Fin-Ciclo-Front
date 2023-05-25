@@ -51,7 +51,8 @@ export default {
           { key: 'containerAmount', label: 'Cantidad', thStyle: { width: '180px' } },
           { key: 'containerCapacity', label: 'Capacidad' },
           { key: 'propiedades.pureza', label: 'Pureza' },
-          { key: 'image_envaseProp', label: 'Imagen' },
+          { key: 'location', label: 'Ubicación', thStyle: { width: '120px'} },
+          { key: 'image_envaseProp', label: 'Imagen', thStyle: { width: '100px' } },
           { key: 'action', label: '' , thStyle:{ width: '120px' } }
         ],
         solicitudUsuarioTableFields: [
@@ -70,6 +71,14 @@ export default {
           { key: 'estado', labe: 'estado', sortable: true, thStyle: { width: '150px' } },
           { key: 'action', label: '', thStyle: { width: '120px' } }
         ],
+        envaseUserTableFields: [
+          { key: 'propiedades.codigo', label: 'Codigo' },
+          { key: 'propiedades.nombre', label: 'Nombre' },
+          { key: 'propiedades.pureza', label: 'Pureza' },
+          { key: 'containerAmount', label: 'Cantidad', thStyle: { width: '180px' } },
+          { key: 'image_envaseProp', label: 'Imagen', thStyle: { width: '100px'} },
+          { key: 'action', label: '', 'thStyle': { width: '120px' } }
+        ],
         sidebarMenuUser: {
           title: 'Área de usuarios',
           icon: 'fas fa-user',
@@ -78,7 +87,7 @@ export default {
               href: '/usuario/solicitud', title: 'Mis solicitudes', icon: 'fas fa-plus-square'
             },
             { 
-              href: '/usuario/compuesto', title: 'Uso compuestos químicos', icon: 'fas fa-flask'
+              href: '/usuario/envase', title: 'Uso compuestos químicos', icon: 'fas fa-flask'
             }
           ]
         },

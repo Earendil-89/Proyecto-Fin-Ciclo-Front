@@ -155,9 +155,9 @@ body
 {
   background-image: linear-gradient(#e8e8ea, #ebe9e9);
 }
-.navbar {
+.navbar
+{
   background: linear-gradient(to right, #2a2a2e 50%, #c3c3c5 90% );
-  
 }
 .card-login {
   max-width: 350px;

@@ -1,14 +1,16 @@
 <template>
   <div>
     <b-row>
-      <b-col v-if="isValidCreateButton()">
+      <b-col v-if="isValidCreateButton">
         <b-button
           variant="primary"
           v-b-toggle:formCollapse
           class="mt-1 actionButton"
           v-show="!formStateCollapse"
         >
-          <i class="fas fa-plus-circle"></i> {{ getNameType }} 
+          <i v-if="type != 'envase-user'" class="fas fa-plus-circle"></i>
+          <i v-else class="fas fa-search"></i>
+          {{ getNameType }} 
         </b-button>
       </b-col>
       <b-col cols="10">
@@ -82,8 +84,15 @@
         <template #cell(userFullName)="row" align="center">
           {{ getUserFullName(row.item) }}
         </template>
+        <template #cell(location)="row" align="center">
+          <p>{{ row.item.estante.armario.nombre }}</p>
+          <p>{{ row.item.estante.nombre }}</p>
+        </template>
         <template #cell(image_inside)="row" align="center">
           <img :src='row.item.compuesto.imgUrl' height="64">
+        </template>
+        <template #cell(image_envaseProp)="row" align="center">
+          <img :src='row.item.propiedades.compuesto.imgUrl' height="64">
         </template>
         <template #cell(capacidad)="row" align="left">
           {{ row.item.capacidad + ' ' + convertUnidades(row.item.unidades) }}
@@ -131,6 +140,20 @@
               class="actionButton ml-1"
               ><i class="fas fa-trash-alt fa-2x"></i
             ></b-button>
+            <b-button
+              v-if="current=='envase-user-dynamic'"
+              size="sm"
+              variant="outline-success"
+              @click="extraction(row.item)"
+              class="actionButton ml-1"
+              ><i class="fas fa-upload fa-2x"></i></b-button>
+            <b-button
+              v-if="current=='envase-user-dynamic'"
+              size="sm"
+              variant="outline-warning"
+              @click="showSecurity(row.item)"
+              class="actionButton ml-1"
+              ><i class="fas fa-exclamation-triangle fa-2x"></i></b-button>
           </b-button-group>
         </template>
         <template #row-details="row">
@@ -238,6 +261,8 @@ export default {
             .catch(error => this.$parent.catchError(error));
         break;
 
+        case 'envase-user': break;
+
         default:
           ClabtoolService.getData(this.type)
             .then(data => {
@@ -247,6 +272,28 @@ export default {
       }
 
       this.busy = false;
+    },
+    searchCompuestos(data) {
+      let query = '';
+      let symbol = '?';
+      if( data.compuesto != 0 ) {
+        query = symbol + 'compuestoId=' + data.compuesto;
+        symbol = '&';
+      } if( data.codigo != '' ) {
+        query = symbol + 'codigo=' + data.codigo;
+        symbol = '&';
+      } if( data.nombre != '' ) {
+        query = symbol + 'nombre=' + data.nombre;
+        symbol = '&';
+      } if( data.pureza != '' ) {
+        query = symbol + 'pureza=' + data.pureza
+      }
+
+      ClabtoolService.getData('user/envase' + query)
+        .then(data => {
+          this.items = data;
+        })
+        .catch(error => this.$parent.catchError(error));
     },
     saveData(data) {
       this.busy = true;
@@ -386,6 +433,9 @@ export default {
     editEstantes(item) {
       this.$refs.component.launchModal(item);
     },
+    extraction(item) {
+      this.$refs.component.showExtraction(item.id);
+    },
     transformEstado(item) {
       switch (item.estado) {
         case 'ESTADO_ESPERA': return 'Esperando trámite';
@@ -402,6 +452,9 @@ export default {
       }
     },
     isValidEditButton(item) {
+      if( this.current == 'envase-user-dynamic' ) {
+        return false;
+      }
       if( this.current == 'solicitudUser-dynamic') {
         if( item.estado != 'ESTADO_ESPERA' ) {
           return false;
@@ -413,6 +466,9 @@ export default {
       return true;
     },
     isValidDeleteButton(item) {
+      if( this.current == 'envase-user-dynamic' ) {
+        return false;
+      }
       if( this.current == 'solicitudUser-dynamic') {
         if( item.estado != 'ESTADO_ESPERA') {
           return false;
@@ -427,9 +483,6 @@ export default {
     },
     isValidTramitationButton() {
       return this.current == 'solicitud-dynamic';
-    },
-    isValidCreateButton() {
-      return this.current != 'solicitud-dynamic';
     },
     getPBarVariant(cantidad, capacidad) {
       if( cantidad == capacidad ) {
@@ -453,8 +506,15 @@ export default {
         case 'envaseProp': return 'Datos de envase';
         case 'solicitud-user': return 'Crear solicitud';
         case 'envase-manager': return 'Crear envase';
+        case 'envase-user': return 'Buscar reactivo';
         default: return 'Crear ' + this.type;
       }
+    },
+    isValidCreateButton() {
+      if( this.current == 'solicitud-dynamic' ) {
+        return false;
+      }
+      return true;
     },
   },
   mounted() {
@@ -471,6 +531,7 @@ export default {
     "compuesto-dynamic": () => import("./CompuestoComponent.vue"),
     "envase-dynamic": () => import("./EnvasePropComponent.vue"),
     "envase-manager-dynamic": () => import("./EnvaseComponent.vue"),
+    "envase-user-dynamic": () => import("./EnvaseUserComponent.vue"),
     "solicitud-dynamic": () => import("./SolicitudManagerComponent.vue"),
     "solicitudUser-dynamic": () => import("./SolicitudUserComponent.vue"),
     "armario-dynamic": () => import("./ArmarioComponent.vue"),
