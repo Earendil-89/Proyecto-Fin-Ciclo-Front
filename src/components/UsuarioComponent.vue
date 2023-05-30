@@ -15,7 +15,7 @@
             <b-form-invalid-feedback :state="validField(email)">Debde introducir una dirección de correo electrónico</b-form-invalid-feedback>
           </b-col>
           <b-col cols="3">
-            <label for="password" class="form-label" v-if="!editState">Contraseña</label>
+            <label for="password" class="form-label">Contraseña</label>
             <div class="d-md-flex">
                 <b-form-input v-model="password" id="Password" :state="validField(password)"></b-form-input>
               <b-button class="ml-2" variant="outline-primary" @click="copyPassword"><i class="fas fa-clipboard-list"></i></b-button>

@@ -72,11 +72,13 @@ export default {
           { key: 'action', label: '', thStyle: { width: '120px' } }
         ],
         envaseUserTableFields: [
-          { key: 'propiedades.codigo', label: 'Codigo' },
-          { key: 'propiedades.nombre', label: 'Nombre' },
-          { key: 'propiedades.pureza', label: 'Pureza' },
+          { key: 'envase.propiedades.codigo', label: 'Codigo', thStyle: { width: '180px' } },
+          { key: 'envase.propiedades.nombre', label: 'Nombre' },
+          { key: 'envase.propiedades.pureza', label: 'Pureza', thStyle: { width: '120px'} },
           { key: 'containerAmount', label: 'Cantidad', thStyle: { width: '180px' } },
-          { key: 'image_envaseProp', label: 'Imagen', thStyle: { width: '100px'} },
+          { key: 'containerCapacity', label: 'Capacidad', thStyle: { width: '120px' } },
+          { key: 'image_usoEnvase', label: 'Imagen', thStyle: { width: '100px'} },
+          { key: 'location', label: 'Ubicación', thStyle: { width: '120px'} },
           { key: 'action', label: '', 'thStyle': { width: '120px' } }
         ],
         sidebarMenuUser: {

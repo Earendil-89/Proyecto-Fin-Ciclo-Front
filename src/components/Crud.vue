@@ -3,15 +3,26 @@
     <b-row>
       <b-col v-if="isValidCreateButton">
         <b-button
+          v-if="type != 'envase-user'"
           variant="primary"
           v-b-toggle:formCollapse
           class="mt-1 actionButton"
           v-show="!formStateCollapse"
         >
-          <i v-if="type != 'envase-user'" class="fas fa-plus-circle"></i>
-          <i v-else class="fas fa-search"></i>
+          <i class="fas fa-plus-circle"></i>
           {{ getNameType }} 
         </b-button>
+        <b-button
+          v-else
+          variant="primary"
+          class="mt-1 actionButton"
+          v-show="!formStateCollapse"
+          @click="searchAction"
+        >
+          <i class="fas fa-search"></i>
+          Buscar reactivo
+        </b-button>
+
       </b-col>
       <b-col cols="10">
         <b-input-group class="mt-1" v-show="!formStateCollapse">
@@ -69,30 +80,37 @@
           <img :src='row.item.imgUrl' height="64">
         </template>
         <template #cell(containerCapacity)="row" align="center">
-          {{ row.item.propiedades.capacidad + ' ' + convertUnidades(row.item.propiedades.unidades) }}
+          {{ getCapacity(row.item) }}
         </template>
         <template #cell(containerAmount)="row" align="center">
-          <p class="text-center mr-3">{{ row.item.cantidad + ' ' + convertUnidades(row.item.propiedades.unidades) }}</p>
+          <p class="text-center mr-3">{{ getQuantity(row.item) }}</p>
           <b-progress
           class="mr-3"
-            :value="row.item.cantidad"
-            :max="row.item.propiedades.capacidad"
-            :variant="getPBarVariant(row.item.cantidad, row.item.propiedades.capacidad)"
+            :value="current == 'envase-user-dynamic' ? row.item.envase.cantidad : row.item.cantidad"
+            :max="current == 'envase-user-dynamic' ? row.item.envase.propiedades.capacidad : row.item.propiedades.capacidad"
+            :variant="getPBarVariant(row.item)"
           >
           </b-progress>
         </template>
         <template #cell(userFullName)="row" align="center">
           {{ getUserFullName(row.item) }}
         </template>
-        <template #cell(location)="row" align="center">
+        <template v-if="current != 'envase-user-dynamic'" #cell(location)="row" align="center">
           <p>{{ row.item.estante.armario.nombre }}</p>
           <p>{{ row.item.estante.nombre }}</p>
+        </template>
+        <template v-else #cell(location)="row" align="center">
+          <p>{{ row.item.envase.estante.armario.nombre }}</p>
+          <p>{{ row.item.envase.estante.nombre }}</p>
         </template>
         <template #cell(image_inside)="row" align="center">
           <img :src='row.item.compuesto.imgUrl' height="64">
         </template>
         <template #cell(image_envaseProp)="row" align="center">
           <img :src='row.item.propiedades.compuesto.imgUrl' height="64">
+        </template>
+        <template #cell(image_usoEnvase)="row" align="center">
+          <img :src='row.item.envase.propiedades.compuesto.imgUrl' height="64">
         </template>
         <template #cell(capacidad)="row" align="left">
           {{ row.item.capacidad + ' ' + convertUnidades(row.item.unidades) }}
@@ -144,9 +162,9 @@
               v-if="current=='envase-user-dynamic'"
               size="sm"
               variant="outline-success"
-              @click="extraction(row.item)"
+              @click="envaseReturn(row.item)"
               class="actionButton ml-1"
-              ><i class="fas fa-upload fa-2x"></i></b-button>
+              ><i class="fas fa-download fa-2x"></i></b-button>
             <b-button
               v-if="current=='envase-user-dynamic'"
               size="sm"
@@ -261,7 +279,13 @@ export default {
             .catch(error => this.$parent.catchError(error));
         break;
 
-        case 'envase-user': break;
+        case 'envase-user': 
+          ClabtoolService.getData('usoEnvase?nombreUsuario=' + name)
+            .then(data => {
+              this.items = data;
+            })
+            .catch(error => this.$parent.catchError(error));  
+        break;
 
         default:
           ClabtoolService.getData(this.type)
@@ -272,28 +296,6 @@ export default {
       }
 
       this.busy = false;
-    },
-    searchCompuestos(data) {
-      let query = '';
-      let symbol = '?';
-      if( data.compuesto != 0 ) {
-        query = symbol + 'compuestoId=' + data.compuesto;
-        symbol = '&';
-      } if( data.codigo != '' ) {
-        query = symbol + 'codigo=' + data.codigo;
-        symbol = '&';
-      } if( data.nombre != '' ) {
-        query = symbol + 'nombre=' + data.nombre;
-        symbol = '&';
-      } if( data.pureza != '' ) {
-        query = symbol + 'pureza=' + data.pureza
-      }
-
-      ClabtoolService.getData('user/envase' + query)
-        .then(data => {
-          this.items = data;
-        })
-        .catch(error => this.$parent.catchError(error));
     },
     saveData(data) {
       this.busy = true;
@@ -317,6 +319,16 @@ export default {
             })
             .catch(error => this.$parent.catchError(error));     
         break;
+
+        case 'envase-user': 
+          data.nombreUsuario = name;
+          ClabtoolService.saveData('usoEnvase', data)
+            .then(data => {
+              this.showMessage(data.status, data.message);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));
+          break;
 
         default:
           ClabtoolService.saveData(this.type, data)
@@ -351,6 +363,16 @@ export default {
             })
             .catch(error => this.$parent.catchError(error));     
         break;
+
+        case 'envase-user': 
+          data.nombreUsuario = name;
+          ClabtoolService.updateData('usoEnvase', data)
+            .then(data => {
+              this.showMessage(data.status, data.message);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));
+          break;
 
         default:
           ClabtoolService.updateData(this.type, data)
@@ -433,8 +455,8 @@ export default {
     editEstantes(item) {
       this.$refs.component.launchModal(item);
     },
-    extraction(item) {
-      this.$refs.component.showExtraction(item.id);
+    envaseReturn(item) {
+      this.$refs.component.showReturn(item);
     },
     transformEstado(item) {
       switch (item.estado) {
@@ -444,10 +466,13 @@ export default {
       }
     },
     getUserFullName(item) {
-      if( this.type == 'solicitud-user') {
+      if( this.type != 'solicitud-user') {
         return item.usuarioSolicitud.apellidos + ', ' + item.usuarioSolicitud.nombre;
       }
       else {
+        if( item.usuarioTramite == null ) {
+          return '';
+        }
         return item.usuarioTramite.apellidos + ', ' + item.usuarioTramite.nombre;
       }
     },
@@ -484,7 +509,26 @@ export default {
     isValidTramitationButton() {
       return this.current == 'solicitud-dynamic';
     },
-    getPBarVariant(cantidad, capacidad) {
+    getQuantity(item) {
+      if( this.current == 'envase-user-dynamic' ) {
+        return item.envase.cantidad + ' ' + this.convertUnidades(item.envase.propiedades.unidades);
+      }
+      else {
+        return item.cantidad + ' ' + this.convertUnidades(item.propiedades.unidades);
+      }
+    },
+    getCapacity(item) {
+      if( this.current == 'envase-user-dynamic' ) {
+        return item.envase.propiedades.capacidad + ' ' + this.convertUnidades(item.envase.propiedades.unidades);
+      }
+      else {
+        return item.propiedades.capacidad + ' ' + this.convertUnidades(item.propiedades.unidades);
+      }
+    },
+    getPBarVariant(item) {
+      const cantidad = this.current == 'envase-user-dynamic' ? item.envase.cantidad : item.cantidad;
+      const capacidad = this.current == 'envase-user-dynamic' ? item.envase.propiedades.capacidad : item.propiedades.capacidad;
+
       if( cantidad == capacidad ) {
         return null;
       }
@@ -495,6 +539,14 @@ export default {
         return 'warning';
       }
       return 'danger';
+    },
+    searchAction() {
+      if( this.type == 'envase-user' ) {
+        this.$refs.component.launchSearchModal();
+      }
+    },
+    showSecurity(item) {
+      this.$refs.component.showSecurity(item.envase.propiedades);
     }
   },
   computed: {
