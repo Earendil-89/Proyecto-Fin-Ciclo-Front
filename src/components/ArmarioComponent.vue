@@ -12,7 +12,8 @@
           <b-col>
             <label for="descripcion" class="form-label">Descripción</label>
             <b-form-input v-model="descripcion" id="descripcion" :state="validField(descripcion)"></b-form-input>
-            <b-form-invalid-feedback :state="validField(descripcion)">Debe introducir una descripcion</b-form-invalid-feedback></b-col>
+            <b-form-invalid-feedback :state="validField(descripcion)">Debe introducir una descripcion</b-form-invalid-feedback>
+          </b-col>
         </b-row>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
           <b-button
@@ -20,16 +21,14 @@
             class="actionButton"
             v-b-toggle:formCollapse
             @click="reset()"
-            ><i class="far fa-times-circle mr-1"></i>Cancelar</b-button
-          >
+            ><i class="far fa-times-circle mr-1"></i>Cancelar</b-button>
           <b-button
             variant="outline-success"
             type="submit"
             class="actionButton"
             v-b-toggle:formCollapse
             ><i class="far fa-check-circle mr-1"></i
-            >{{ txtBtnForm }}</b-button
-          >
+            >{{ txtBtnForm }}</b-button>
         </div>
       </b-form>
     </b-collapse>
