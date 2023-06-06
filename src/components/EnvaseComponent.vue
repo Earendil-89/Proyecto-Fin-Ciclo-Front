@@ -38,12 +38,20 @@
             <b-col>
               <label for="estante" class="form-label">Estante</label>
               <b-form-select
-              id="estante"
-              v-model="estante"
-              :options="listEstantes"
-              :state="validObj(estante)"
-              ></b-form-select>
+                id="estante"
+                v-model="estante"
+                :options="listEstantes"
+                :state="validObj(estante)"
+              />
               <b-form-invalid-feedback :state="validObj(estante)">Debe especificar un almacenamiento</b-form-invalid-feedback>
+            </b-col>
+            <b-col>
+              <label for="pedido" class="form-label">Pedido</label>
+              <b-form-select
+                id="pedido"
+                v-model="pedido"
+                :options="listPedidos"
+              />
             </b-col>
           </b-row>
           <b-row class="mb-3">
@@ -271,6 +279,7 @@
         envasePropItems: [],
         listArmarios: [],
         listEstantes: [],
+        listPedidos: [],
         perPageCompuesto: 5,
         currentPageCompuesto: 1,
         busy: false
@@ -310,6 +319,8 @@
         this.estante = null;
         this.armario = null;
         this.propiedades = null;
+        this.frases = null;
+        this.etiquetas = null;
         this.pedido = null;
         this.selectPropState = false;
   
@@ -324,6 +335,8 @@
         this.armario = item.estante.armario,
         this.estante = item.estante,
         this.frases = item.frases;
+        this.etiquetas = item.etiquetas;
+        this.pedido = item.pedido;
         this.selectPropState = false;
   
         this.txtBtnForm = 'Actualizar';
@@ -369,11 +382,20 @@
         this.$root.$emit('bv::show::modal', 'modal-etiquetas', button);     
       },
       setArmarios(data) {
-        this.listArmarios = [ { value: null, text: 'Elija un armario' } ]
+        this.listArmarios = [ { value: null, text: 'Elija un armario' } ];
         for( let i = 0; i < data.length; i++ ) {
           this.listArmarios.push({
             value: data[i],
             text: data[i].nombre
+          });
+        }
+      },
+      setPedidos(data) {
+        this.listPedidos = [ { value: null, text: 'Elija un pedido' } ];
+        for( let i = 0; i < data.length; i++ ) {
+          this.listPedidos.push({
+            value: data[i],
+            text: data[i].factura
           });
         }
       },
