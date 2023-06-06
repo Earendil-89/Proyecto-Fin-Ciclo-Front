@@ -4,6 +4,7 @@ export default {
       return {
         VERSION: '1.0.0',
         usuarioTableFields: [
+          { key: 'nombreUsuario', label: 'Nombre de usuario', sortable: true },
           { key: 'nombre', label: 'Nombre', sortable: true },
           { key: 'apellidos', label: 'Apellidos', sortable: true },
           { key: 'email', label: 'Email' },
@@ -34,6 +35,7 @@ export default {
         compuestoTableFields: [
           { key: 'cas', label: 'Nº CAS', sortable: true, thStyle: { width: '120px'} },
           { key: 'nombre', label: 'Nombre', sortable: true },
+          { key: 'pesoMolecular', label: 'Peso molecular', sortable: true },
           { key: 'image', label: 'Imagen', thStyle: { width: '100px'} },
           { key: 'action', label: '', thStyle: { width: '120px'} }
         ],
@@ -73,13 +75,30 @@ export default {
         ],
         envaseUserTableFields: [
           { key: 'envase.propiedades.codigo', label: 'Codigo', thStyle: { width: '180px' } },
-          { key: 'envase.propiedades.nombre', label: 'Nombre' },
-          { key: 'envase.propiedades.pureza', label: 'Pureza', thStyle: { width: '120px'} },
-          { key: 'containerAmount', label: 'Cantidad', thStyle: { width: '180px' } },
-          { key: 'containerCapacity', label: 'Capacidad', thStyle: { width: '120px' } },
+          { key: 'envase.propiedades.nombre', label: 'Nombre', sortable: true },
+          { key: 'envase.propiedades.pureza', label: 'Pureza', sortable: true, thStyle: { width: '120px'} },
+          { key: 'containerAmount', label: 'Cantidad', sortable: true, thStyle: { width: '180px' } },
+          { key: 'containerCapacity', label: 'Capacidad', sortable: true, thStyle: { width: '120px' } },
           { key: 'image_usoEnvase', label: 'Imagen', thStyle: { width: '100px'} },
-          { key: 'location', label: 'Ubicación', thStyle: { width: '120px'} },
+          { key: 'location', label: 'Ubicación', sortable: true, thStyle: { width: '120px'} },
           { key: 'action', label: '', 'thStyle': { width: '120px' } }
+        ],
+        pedidoTableFields: [
+          { key: 'factura', label: 'Factura', sortable: true },
+          { key: 'fechaPedido', label: 'Fecha del pedido', sortable: true },
+          { key: 'fechaEntrega', label: 'Fecha de entrega', sortable: true },
+          { key: 'userFullName', label: 'Realizado por', sortable: true },
+          { key: 'importe', label: 'Importe' },
+          { key: 'action', label: '' , thStyle: { width: '120px' } }
+        ],
+        usoEnvaseTableFields: [
+          { key: 'userFullName', label: 'Usado por', sortable: true },
+          { key: 'envase.propiedades.codigo', label: 'Código envase', sortable: true },
+          { key: 'fechaUso', label: 'Extracción', sortable: true },
+          { key: 'fechaDevolucion', label: 'Devolucion', sortable: true },
+          { key: 'cantidadUsada', label: 'Cantidad usada', sortable: true },
+          { key: 'envase.propiedades.unidades.nombre', label: 'Unidades' },
+          { key: 'action', label: '', thStyle: { width: '120px' } }
         ],
         sidebarMenuUser: {
           title: 'Área de usuarios',
@@ -98,6 +117,7 @@ export default {
           icon: 'fas fa-user-cog',
           child: [
             { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' },
+            { href: '/pedido', title: 'Gestión de pedidos', icon: 'fas fa-truck' },
             { href: '/manager/envase', title: 'Gestión de envases', icon: 'fas fa-flask' },
             { 
               href: '', title: 'Almacenamiento', icon: 'fas fa-warehouse',
@@ -106,6 +126,7 @@ export default {
                 { href: '/estante', title: 'Estantes', icon: 'fas fa-pallet' }
             ]
             },
+            { href: '/usoEnvase', title: 'Uso de envases' },
             { href: '/frase', title: 'Frases seguridad', icon: 'fas fa-exclamation-triangle' },
             { href: '/etiqueta', title: 'Etiquetado seguridad', icon: 'fas fa-exclamation-triangle'},
             { href: '/compuesto', title: 'Compuestos químicos', icon :'fas fa-atom' },
