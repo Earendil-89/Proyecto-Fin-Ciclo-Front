@@ -133,7 +133,6 @@ export default {
       }
       this.gotoUpdate = true;
       this.gotoUpdate = false;
-      console.log("Called udpate");
     }
   },
   mounted() {
