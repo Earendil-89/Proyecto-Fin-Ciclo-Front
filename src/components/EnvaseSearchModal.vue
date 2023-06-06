@@ -198,6 +198,9 @@
         <template #cell(pureza)="row" align="center">
           {{ row.item.pureza }}%
         </template>
+        <template #cell(getUser)="row" align="center">
+          {{ getUserName(row.item) }}
+        </template>
         <template #cell(action)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
           <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
             <b-button
@@ -260,10 +263,11 @@ export default {
       items: [],
       mainTableFields: [
         { key: 'propiedades.codigo', label: 'Codigo' },
-        { key: 'propiedades.nombre', label: 'Nombre' },
-        { key: 'propiedades.pureza', label: 'Pureza' },
+        { key: 'propiedades.nombre', label: 'Nombre', sortable: true },
+        { key: 'propiedades.pureza', label: 'Pureza', sortable: true },
         { key: 'containerAmount', label: 'Cantidad', thStyle: { width: '180px' } },
         { key: 'image_envaseProp', label: 'Imagen', thStyle: { width: '100px'} },
+        { key: 'getUser', label: 'En uso por', sortable: true },
         { key: 'action', label: '', 'thStyle': { width: '120px' } }
       ],
       // -- Variables de la búsqueda de compuestos químicos
@@ -357,6 +361,15 @@ export default {
     sendExtraction(element) {
       this.$emit('onSelect', element.id);
     },
+    showSecurity(item) {
+      this.$emit('onSecurity', item.propiedades);
+    },
+    getUserName(item) {
+      if( item.usuario == null ) {
+        return '';
+      }
+      return item.usuario.apellidos + ', ' + item.usuario.nombre;
+    }
   },
   computed: {
     validateAllFields() {
