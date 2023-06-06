@@ -108,6 +108,22 @@ export const router = new Router({
         mainTableFields: Vue.prototype.$constants().envaseUserTableFields,
         type: 'envase-user'      
       }
-    }
+    },
+    {
+      path: '/pedido',
+      component: () => import('./components/Crud.vue'),
+      props: { current: "pedido-dynamic",
+        mainTableFields: Vue.prototype.$constants().pedidoTableFields,
+        type: 'pedido'
+      }
+    },
+    {
+      path: '/usoEnvase',
+      component: () => import('./components/Crud.vue'),
+      props: { current: "usoEnvase-dynamic",
+        mainTableFields: Vue.prototype.$constants().usoEnvaseTableFields,
+        type: 'usoEnvase'
+      }
+    },    
   ]
 });
