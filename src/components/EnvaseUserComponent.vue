@@ -6,7 +6,8 @@
       size="xl"
     ><EnvaseSearch
       @onError="(error) => catchError(error)"
-      @onSelect="(id) => showExtraction(id)"></EnvaseSearch></b-modal>
+      @onSelect="(id) => showExtraction(id)"
+      @onSecurity="(sec) => showSecurity(sec)"></EnvaseSearch></b-modal>
     <b-modal
       id="modal-extraccion"
       title="Retirar envase"
