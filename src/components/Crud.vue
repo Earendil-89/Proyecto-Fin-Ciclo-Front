@@ -121,6 +121,12 @@
         <template #cell(pureza)="row" align="center">
           {{ row.item.pureza }}%
         </template>
+        <template #cell(fechaUso)="row" align="center">
+          {{ formatFecha(row.item.fechaUso) }}
+        </template>
+        <template #cell(fechaDevolucion)="row" align="center">
+          {{ formatFecha(row.item.fechaDevolucion) }}
+        </template>
         <template #cell(action)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
           <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
             <b-button
@@ -132,14 +138,33 @@
               {{ row.detailsShowing ? '' : '' }}
             </b-button>
             <b-button
+              v-if="current==='usuario-dynamic'"
+              size="sm"
+              variant="outline-primary"
+              v-b-toggle:formCollapse
+              @click="enterPwdMode(row.item)"
+              class="actionButton ml-1"
+            >
+              <i class="fas fa-key fa-2x"></i>
+            </b-button>
+            
+            <b-button
+              v-if="isValidClosePedidoButton(row.item)"
+              size="sm"
+              variant="outline-danger"
+              @click="closePedido(row.item)"
+              class="actionButton ml-1"
+              ><i class="fas fa-truck-loading"></i>
+            </b-button>
+            <b-button
               v-if="isValidEditButton(row.item)"
               size="sm"
               variant="outline-success"
               v-b-toggle:formCollapse
               @click="editComponent(row.item)"
               class="actionButton ml-1"
-              ><i class="fas fa-edit fa-2x"></i
-            ></b-button>
+              ><i class="fas fa-edit fa-2x"></i>
+            </b-button>
             <b-button
               v-if="isValidTramitationButton()"
               size="sm"
@@ -147,8 +172,7 @@
               v-b-toggle:formCollapse
               @click="editComponent(row.item)"
               class="actionButton ml-1"
-            >
-              <i class="fas fa-stamp fa-2x"></i>
+            ><i class="fas fa-stamp fa-2x"></i>
             </b-button>
             <b-button
               v-if="isValidDeleteButton(row.item)"
@@ -156,8 +180,8 @@
               variant="outline-danger"
               @click="deleteData(row.item)"
               class="actionButton ml-1"
-              ><i class="fas fa-trash-alt fa-2x"></i
-            ></b-button>
+              ><i class="fas fa-trash-alt fa-2x"></i>
+            </b-button>
             <b-button
               v-if="current=='envase-user-dynamic'"
               size="sm"
@@ -190,6 +214,7 @@
 
 <script>
 import ClabtoolService from '../services/clabtool.service';
+import AuthService from '../services/auth.service';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
@@ -277,10 +302,52 @@ export default {
               this.$refs.component.setArmarios(data);
             })
             .catch(error => this.$parent.catchError(error));
+
+          ClabtoolService.getData('pedido?isClosed=false')
+            .then(data => {
+              this.$refs.component.setPedidos(data);
+            })
+            .catch(error => this.$parent.catchError(error));
         break;
 
         case 'envase-user': 
           ClabtoolService.getData('usoEnvase?nombreUsuario=' + name)
+            .then(data => {
+              this.items = data;
+            })
+            .catch(error => this.$parent.catchError(error));  
+        break;
+        
+        case 'usuario': {
+          AuthService.get()
+            .then(data => {
+              this.items = data;
+              ClabtoolService.getData('usuario')
+                .then(data2 => {
+                  for( let i = 0; i < this.items.length; i++ ) {
+                    for( let j = 0; j < data2.length; j++ ) {
+                      if( this.items[i].username === data2[j].nombreUsuario ) {
+                        this.items[i].id_clabtool = data2[j].id;
+                        this.items[i].nombre = data2[j].nombre;
+                        this.items[i].apellidos = data2[j].apellidos;
+                        this.items[i].nombreUsuario = data2[j].nombreUsuario;
+                        this.items[i].email = data2[j].email;
+                        data2.splice(j, 1);
+                        break;
+                      }
+                    }
+                  }
+                  this.$forceUpdate();
+                })
+                .catch(error => this.$parent.catchError(error));
+
+                this.$forceUpdate();
+              })
+            .catch(error => this.$parent.catchError(error));
+        } break;
+        
+        case 'usoEnvase':
+          ClabtoolService.getData('manager/usoEnvase')
             .then(data => {
               this.items = data;
             })
@@ -294,7 +361,6 @@ export default {
             })
             .catch(error => this.$parent.catchError(error));
       }
-
       this.busy = false;
     },
     saveData(data) {
@@ -328,7 +394,30 @@ export default {
               this.getData();
             })
             .catch(error => this.$parent.catchError(error));
-          break;
+        break;
+        
+        case 'usuario': {
+          const authData = {
+            username: data.nombreUsuario,
+            password: data.password,
+            email: data.email,
+            role: data.roles,
+            attributes: []
+          };
+          const clabtoolData = {
+            nombreUsuario: data.nombreUsuario,
+            email: data.email,
+            nombre: data.nombre,
+            apellidos: data.apellidos,
+          };
+          AuthService.signup(authData)
+            .then( data => {
+              console.log(data.message);
+              this.getAndRegister(clabtoolData);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));
+        } break;
 
         default:
           ClabtoolService.saveData(this.type, data)
@@ -338,7 +427,6 @@ export default {
             })
             .catch(error => this.$parent.catchError(error));
       }
-
       this.busy = false;
     },
     updateData(data) {
@@ -374,6 +462,43 @@ export default {
             .catch(error => this.$parent.catchError(error));
           break;
 
+        case 'solicitud-user':
+          ClabtoolService.updateData('solicitud', data)
+            .then(data => {
+              this.showMessage(data.status, data.message);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));
+        break;
+
+        case 'usuario': {
+          const authData = {
+            id: data.id,
+            username: data.nombreUsuario,
+            role: data.roles,
+            attributes: []
+          };
+          const clabData = {
+            id: data.id_clabtool,
+            nombreUsuario: data.nombreUsuario,
+            nombre: data.nombre,
+            apellidos: data.apellidos,
+            email: data.email
+          }
+          ClabtoolService.updateData('usuario', clabData)
+            .then(clabResult => {
+              AuthService.updateUser(authData)
+                .then(authResult => {
+                  console.log(authResult);
+                })
+                .catch(error => this.$parent.catchError(error));
+
+              this.showMessage(clabResult.status, clabResult.message);
+              this.getData();
+            })
+            .catch(error => this.$parent.catchError(error));
+        } break;
+
         default:
           ClabtoolService.updateData(this.type, data)
             .then(data => {
@@ -384,6 +509,36 @@ export default {
       }
 
       this.busy = false;
+    },
+    getAndRegister(data) {
+
+      AuthService.get()
+        .then(result => {
+          for( let i = 0; i < result.length; i++ ) {
+            if( result[i].username === data.nombreUsuario ) {
+              const clabData = {
+                id: result[i].id,
+                nombreUsuario: data.nombreUsuario,
+                nombre: data.nombre,
+                apellidos: data.apellidos,
+                email: data.email
+              };
+              ClabtoolService.saveData('usuario', clabData)
+                .then(sndRes => {
+                  this.showMessage(sndRes.status, sndRes.message);
+                  this.getData(this.type);
+                })
+                .catch(error => this.$parent.catchError(error));
+            }
+          }
+        })
+    },
+    updatePassword(data) {
+      AuthService.setPassword(data)
+        .then( () => {
+          this.showMessage(0, 'Contraseña actualizada');
+        })
+        .catch(error => this.$parent.catchError(error));
     },
     deleteData(data) {
       this.deleteConfirm = '';
@@ -402,7 +557,7 @@ export default {
           if (this.deleteConfirm == true) {
             switch (this.type) {
               case 'envase-manager':
-              ClabtoolService.deleteData('envase', data.id)
+                ClabtoolService.deleteData('envase', data.id)
                   .then(data => {
                     this.showMessage(data.status, data.message);
                     this.getData();
@@ -417,6 +572,22 @@ export default {
                     this.getData();
                   })
                   .catch(error => this.$parent.catchError(error));
+              break;
+
+              case 'usuario':
+                ClabtoolService.deleteData(this.type, data.id_clabtool)
+                  .then( clabData => {
+                    AuthService.delete(data.id)
+                      .then( authData => {
+                        console.log(authData.message);
+                        this.getData();
+                      })
+                      .catch(error => this.$parent.catchError(error));
+
+                    this.showMessage(clabData.status, clabData.message);
+                    
+                  })
+                  .catch(error => this.$parent.catchError(error)); 
               break;
 
               default:
@@ -435,8 +606,29 @@ export default {
       const title = status == 0? 'Success' : 'Danger';
       this.$parent.showMsgBoxConfirm(message, stat, title, 'sm');
     },
+    closePedido(item) {
+      this.$bvModal
+        .msgBoxConfirm('¿Quieres registrar la entrega?', {
+          title: '',
+          okVariant: 'danger',
+          okTitle: 'SÍ',
+          cancelTitle: 'NO',
+          footerClass: 'p-2',
+          hideHeaderClose: false,
+          centered: true
+        })
+        .then(value => {
+          if( value == true ) {
+            item.fechaEntrega = new Date();
+            this.updateData(item);
+          }
+        });
+    },
     editComponent(item) {
       this.$refs.component.loadItem(item);
+    },
+    enterPwdMode(item) {
+      this.$refs.component.editPassword(item);
     },
     catchError(error) {
       this.$parent.catchError(error);
@@ -467,6 +659,9 @@ export default {
     },
     getUserFullName(item) {
       if( this.type != 'solicitud-user') {
+        if( this.current == 'pedido-dynamic' || this.current == 'usoEnvase-dynamic' ) {
+          return item.usuario.apellidos + ', ' + item.usuario.nombre;
+        }
         return item.usuarioSolicitud.apellidos + ', ' + item.usuarioSolicitud.nombre;
       }
       else {
@@ -476,7 +671,15 @@ export default {
         return item.usuarioTramite.apellidos + ', ' + item.usuarioTramite.nombre;
       }
     },
+    formatFecha(inputDate) {
+      const date = new Date(inputDate);
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+      return date.toLocaleString('es-ES', options);
+    },
     isValidEditButton(item) {
+      if( this.current == 'usoEnvase-dynamic' ) {
+        return false;
+      }
       if( this.current == 'envase-user-dynamic' ) {
         return false;
       }
@@ -491,6 +694,9 @@ export default {
       return true;
     },
     isValidDeleteButton(item) {
+      if( this.current == 'usoEnvase-dynamic' ) {
+        return false;
+      }
       if( this.current == 'envase-user-dynamic' ) {
         return false;
       }
@@ -508,6 +714,12 @@ export default {
     },
     isValidTramitationButton() {
       return this.current == 'solicitud-dynamic';
+    },
+    isValidClosePedidoButton(item) {
+      if( this.current != 'pedido-dynamic' ) {
+        return false;
+      }
+      return item.fechaEntrega == null;
     },
     getQuantity(item) {
       if( this.current == 'envase-user-dynamic' ) {
@@ -567,7 +779,7 @@ export default {
         return false;
       }
       return true;
-    },
+    }
   },
   mounted() {
     this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
@@ -588,6 +800,8 @@ export default {
     "solicitudUser-dynamic": () => import("./SolicitudUserComponent.vue"),
     "armario-dynamic": () => import("./ArmarioComponent.vue"),
     "estante-dynamic": () => import("./EstanteComponent.vue"),
+    "pedido-dynamic": () => import("./PedidoComponent.vue"),
+    "usoEnvase-dynamic": () => import("./UsoEnvaseComponent.vue"),
     VueJsonPretty
   }
 };
