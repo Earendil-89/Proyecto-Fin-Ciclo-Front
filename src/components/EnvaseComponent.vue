@@ -53,6 +53,15 @@
                 :options="listPedidos"
               />
             </b-col>
+            <b-col cols="1">
+              <div>
+                <label for="pedido" class="form-label">Disponibilidad</label>
+              </div>
+              <b-button
+                @click="disponible = !disponible"
+                :variant="disponible ? 'primary' : 'outline-primary'"
+              >{{ disponible ? 'Disponible' : 'No disponible' }}</b-button>
+          </b-col>
           </b-row>
           <b-row class="mb-3">
             <b-col>
@@ -236,7 +245,7 @@
         // -- 
         id: null,
         cantidad: '',
-        disponible: false,
+        disponible: true,
         armario: null,
         estante: null,
         propiedades: null,
