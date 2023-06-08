@@ -76,6 +76,14 @@
             <b-spinner class="align-middle"></b-spinner>
           </div>
         </template>
+        <template #cell(link)="row" align="center">
+          <a 
+            v-if="row.item.link != null && row.item.link != ''"
+            :href="row.item.link"
+            class="btn btn-outline-primary"
+            target="_blank"
+          ><i class="fas fa-globe-europe fa-lg"></i></a>
+        </template>
         <template #cell(image)="row" align="center">
           <img :src='row.item.imgUrl' height="64">
         </template>
@@ -127,6 +135,10 @@
         <template #cell(fechaDevolucion)="row" align="center">
           {{ formatFecha(row.item.fechaDevolucion) }}
         </template>
+        <template #cell(disponible)="row" align="center">
+          <i v-if="row.item.disponible" class="fas fa-check-circle" style="color: #00bb44"></i>
+          <i v-else class="fas fa-times-circle" style="color: #bb4400"></i>
+        </template>
         <template #cell(action)="row" align="center" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
           <b-button-group align="center" size="sm" style="padding: 0px 0px 0px 0px; margin:0px 0px 0px 0px" >
             <b-button
@@ -134,7 +146,7 @@
               variant="outline-info"
               @click="row.toggleDetails"
               class="actionButton ml-1"
-              ><i class="fas fa-info"></i>
+              ><i class="fas fa-code fa-lg"></i>
               {{ row.detailsShowing ? '' : '' }}
             </b-button>
             <b-button
@@ -590,6 +602,15 @@ export default {
                   .catch(error => this.$parent.catchError(error)); 
               break;
 
+              case 'solicitud-manager':
+                ClabtoolService.deleteData('solicitud', data.id)
+                  .then(data => {
+                    this.showMessage(data.status, data.message);
+                    this.getData();
+                  })
+                  .catch(error => this.$parent.catchError(error));
+              break;
+
               default:
                 ClabtoolService.deleteData(this.type, data.id)
                   .then(data => {
@@ -672,6 +693,9 @@ export default {
       }
     },
     formatFecha(inputDate) {
+      if( inputDate == null ) {
+        return '';
+      }
       const date = new Date(inputDate);
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
       return date.toLocaleString('es-ES', options);
