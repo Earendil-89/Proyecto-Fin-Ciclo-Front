@@ -50,8 +50,10 @@ export default {
         envaseTableFields: [
           { key: 'propiedades.codigo', label: 'Código' },
           { key: 'propiedades.nombre', label: 'Nombre' },
+          { key: 'pedido.factura', label: 'Pedido' },
           { key: 'containerAmount', label: 'Cantidad', thStyle: { width: '180px' } },
           { key: 'containerCapacity', label: 'Capacidad' },
+          { key: 'disponible', label: 'Disponible', thStyle: { width: '80px' } },
           { key: 'propiedades.pureza', label: 'Pureza' },
           { key: 'location', label: 'Ubicación', thStyle: { width: '120px'} },
           { key: 'image_envaseProp', label: 'Imagen', thStyle: { width: '100px' } },
@@ -61,6 +63,7 @@ export default {
           { key: 'fechaSolicitud', label: 'Fecha', sortable: true, thStyle: { width: '120px'} },
           { key: 'estado', label: 'Estado', sortable: true, thStyle: { width: '150px'} },
           { key: 'codigoRecipiente', label: 'Recipiente'},
+          { key: 'link', label: 'Link', thStyle: { width: '90px' } },
           { key: 'descripcion', label: 'descripcion', thStyle: { minWidth: '220px'} },
           { key: 'userFullName', label: 'Tramitado por', thStyle: { minWidth: '140px' } },
           { key: 'action', label: '', thStyle: { width: '120px'} },
@@ -109,28 +112,35 @@ export default {
             },
             { 
               href: '/usuario/envase', title: 'Uso compuestos químicos', icon: 'fas fa-flask'
-            }
-          ]
+            },
+            
+          ],
         },
         sidebarMenuManager: {
           title: 'Área de responsables',
           icon: 'fas fa-user-cog',
           child: [
-            { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' },
+            { href: '/solicitud', title: 'Gestión solicitudes', icon: 'fas fa-cogs' },
+            
             { href: '/pedido', title: 'Gestión de pedidos', icon: 'fas fa-truck' },
             { href: '/manager/envase', title: 'Gestión de envases', icon: 'fas fa-flask' },
+            { href: '/usoEnvase', title: 'Uso de envases', icon: 'far fa-eye' },
+            { href: '/envaseProp', title: 'Base de Datos de envases', icon: 'fas fa-database' },
             { 
               href: '', title: 'Almacenamiento', icon: 'fas fa-warehouse',
               child: [ 
                 { href: '/armario', title: 'Armarios', icon: 'fas fa-box' },
                 { href: '/estante', title: 'Estantes', icon: 'fas fa-pallet' }
-            ]
+              ]
             },
-            { href: '/usoEnvase', title: 'Uso de envases' },
-            { href: '/frase', title: 'Frases seguridad', icon: 'fas fa-exclamation-triangle' },
-            { href: '/etiqueta', title: 'Etiquetado seguridad', icon: 'fas fa-exclamation-triangle'},
+            {
+              href: '', title: 'Seguridad química', icon: 'fas fa-exclamation-triangle',
+              child: [
+                { href: '/etiqueta', title: 'Etiquetado seguridad', icon: 'fas fa-exclamation-triangle' },
+                { href: '/frase', title: 'Frases seguridad', icon: 'fas fa-exclamation-triangle' }
+              ]
+            },
             { href: '/compuesto', title: 'Compuestos químicos', icon :'fas fa-atom' },
-            { href: '/solicitud', title: 'Gestión solicitudes', icon: 'fas fa-cogs' },
           ]
         },
         sidebarMenuAdmin: {
