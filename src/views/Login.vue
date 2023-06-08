@@ -5,6 +5,7 @@
         class="card-img-top"
         src="../images/logo_clabtool.png"
         alt="Card image cap"
+
       />
       <p>CLabTool</p>
       <p style="font-size: 70%; font-weight: bold;color: red;">
@@ -36,7 +37,7 @@
             type="password"
             class="form-control"
             name="password"
-            placeholder="Password"
+            placeholder="Contraseña"
             style="font-size:80%;"
           />
           <div
@@ -44,7 +45,7 @@
             class="alert alert-danger"
             role="alert"
           >
-            Password obligatorio!
+            Contraseña obligatoria
           </div>
         </div>
         <div class="form-group">
@@ -105,6 +106,10 @@ export default {
             },
             error => {
               this.loading = false;
+              if( error.response.status === 401 ) {
+                this.message = 'Usuario o contraseña incorrectos.';
+                return;
+              }
               this.message =
                 (error.response &&
                   error.response.data &&
@@ -142,6 +147,10 @@ label {
   -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.card-img-top {
+  width: 160px;
 }
 
 .profile-img-card {
