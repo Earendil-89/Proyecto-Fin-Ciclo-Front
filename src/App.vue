@@ -85,8 +85,17 @@ export default {
           this.logOut();
           return;
         }
+        if( error.response != null && error.response.status == 403 ) {
+          this.showMsgBoxConfirm(
+            'No tienes permisos para este recurso',
+            'danger',
+            'Error',
+            'sm'
+          );
+          return;
+        }
         this.showMsgBoxConfirm(
-          'A problem occurred. Please contact the administrator',
+          'Ha ocurrido un problema. Por favor contacte con el administrador.',
           'danger',
           'Error',
           'sm'
@@ -124,9 +133,11 @@ export default {
       }
       if( this.currentUser.roles.includes('ROLE_USER')) {
         this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuUser);
+        this.sideBarMenu.push({});
       }
       if( this.currentUser.roles.includes('ROLE_INSPECTOR') ) {
         this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuManager);
+        this.sideBarMenu.push({});
       }
       if( this.currentUser.roles.includes('ROLE_ADMIN') ) {
         this.sideBarMenu.push(Vue.prototype.$constants().sidebarMenuAdmin);
