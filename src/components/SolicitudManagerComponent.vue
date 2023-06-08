@@ -6,15 +6,15 @@
         <b-row class="mb-3">
           <b-col cols="2">
             <label for="codigo-recipiente" class="form-label">Código del recipiente</label>
-            <b-form-input v-model="codigoRecipiente" id="show-data" disabled="true"></b-form-input>
+            <b-form-input v-model="codigoRecipiente" id="show-data" :disabled="true"></b-form-input>
           </b-col>
           <b-col>
             <label for="link" class="form-label">Usuario</label>
-            <b-form-input v-model="fullUserName" id="show-data" disabled="true"></b-form-input>
+            <b-form-input v-model="fullUserName" id="show-data" :disabled="true"></b-form-input>
           </b-col>
           <b-col>
             <label for="link" class="form-label">Fecha de la solicitud</label>
-            <b-form-input v-model="fechaSolicitudForm" id="show-data" disabled="true"></b-form-input>
+            <b-form-input v-model="fechaSolicitudForm" id="show-data" :disabled="true"></b-form-input>
           </b-col>
           <b-col>
             <label for="link" class="form-label">Estado de la solicitud</label>
@@ -24,7 +24,7 @@
         <b-row class="mb-3">
           <b-col>
             <label for="descripcion" class="form-label">Descripción de la solicitud</label>
-            <b-form-textarea v-model="descripcion" id="show-data" disabled="true"></b-form-textarea>
+            <b-form-textarea v-model="descripcion" id="show-data" :disabled="true"></b-form-textarea>
           </b-col>
         </b-row>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -123,6 +123,9 @@
     },
     computed: {
       fullUserName() {
+        if( this.usuarioSolicitud == null ) {
+          return '';
+        }
         return this.usuarioSolicitud.apellidos + ', ' + this.usuarioSolicitud.nombre;
       },
       fechaSolicitudForm() {
